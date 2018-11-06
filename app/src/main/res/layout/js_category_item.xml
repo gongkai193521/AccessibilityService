@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:n1="http://schemas.android.com/apk/res/android"
+              n1:layout_width="fill_parent"
+              n1:layout_height="wrap_content"
+              n1:background="#ff222222"
+              n1:orientation="horizontal"
+              n1:paddingBottom="4.0dip"
+              n1:paddingLeft="10.0dip"
+              n1:paddingRight="10.0dip"
+              n1:paddingTop="4.0dip"
+              n1:tag="layout/js_category_item_0">
+
+    <RelativeLayout
+        n1:layout_width="fill_parent"
+        n1:layout_height="fill_parent"
+        n1:orientation="vertical">
+
+        <View
+            n1:layout_width="2.0dip"
+            n1:layout_height="12.0dip"
+            n1:layout_centerVertical="true"
+            n1:background="#ff5761e7"/>
+
+        <TextView
+            n1:layout_width="wrap_content"
+            n1:layout_height="wrap_content"
+            n1:layout_marginLeft="7.5dip"
+            n1:tag="binding_1"
+            n1:textColor="#ff999999"
+            n1:textSize="12.0dip"/>
+    </RelativeLayout>
+</LinearLayout>

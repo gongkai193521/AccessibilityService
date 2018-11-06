@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">辅助</string>
+
+    <!-- Strings related to login -->
+    <string name="login_hint">请输入登录账号</string>
+    <string name="password_hint">请输入登录密码</string>
+    <string name="action_sign_in">立即登录</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">请输入密码</string>
+    <string name="error_field_required">请输入账号</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="accessibility_service_description">脚本引擎依赖服务[请启用]</string>
+</resources>

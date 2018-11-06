@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="0.0dip"
+                android:orientation="vertical"
+                android:padding="10.0dip"
+                android:tag="layout/js_item_0">
+
+    <RelativeLayout
+        android:id="@+id/rv_top"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:tag="binding_1">
+
+        <RelativeLayout
+            android:id="@+id/rl_left"
+            android:layout_width="60.0dip"
+            android:layout_height="60.0dip">
+
+            <ImageView
+                android:id="@+id/iv_icon"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="5.0dip"
+                android:tag="binding_2"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:background="#ffff3366"
+                android:paddingBottom="1.0dip"
+                android:paddingLeft="1.5dip"
+                android:paddingRight="1.5dip"
+                android:paddingTop="1.0dip"
+                android:tag="binding_3"
+                android:text="已选择"
+                android:textColor="#ffffffff"
+                android:textSize="10.0dip"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="8.0dip"
+            android:layout_toRightOf="@id/rl_left">
+
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tag="binding_4"
+                android:textColor="#ffeeeeee"
+                android:textSize="14.0dip"/>
+
+            <LinearLayout
+                android:id="@+id/rl_pv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10.0dip"
+                android:orientation="horizontal"
+                android:layout_toRightOf="@id/tv_name">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="今日进度："
+                    android:textColor="#ffffffff"
+                    android:textSize="10.0dip"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5.0dip"
+                    android:layout_marginRight="5.0dip"
+                    android:tag="binding_5"
+                    android:textColor="#ffffff00"
+                    android:textSize="14.0dip"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="%"
+                    android:textColor="#ffffffff"
+                    android:textSize="10.0dip"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_versions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_name"
+                android:layout_marginTop="5.0dip"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:tag="binding_6"
+                android:textColor="#ffffffff"
+                android:textSize="10.0dip"/>
+
+            <TextView
+                android:id="@+id/tv_money"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_versions"
+                android:layout_marginTop="5.0dip"
+                android:tag="binding_7"
+                android:textColor="#ffeeeeee"
+                android:textSize="10.0dip"
+                android:layout_alignParentLeft="true"/>
+
+            <TextView
+                android:id="@+id/tv_pv"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_money"
+                android:layout_marginTop="5.0dip"
+                android:tag="binding_8"
+                android:textColor="#ffeeeeee"
+                android:textSize="10.0dip"
+                android:layout_alignParentLeft="true"/>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_below="@id/tv_pv"
+                android:layout_marginTop="10.0dip"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10.0dip"
+                    android:orientation="horizontal"
+                    android:tag="binding_9">
+
+                    <Button
+                        android:id="@+id/btn_run"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="#ff6633cc"
+                        android:minHeight="0.0dip"
+                        android:minWidth="0.0dip"
+                        android:paddingBottom="2.0dip"
+                        android:paddingLeft="10.0dip"
+                        android:paddingRight="10.0dip"
+                        android:paddingTop="2.0dip"
+                        android:tag="binding_10"
+                        android:textColor="#ffffffff"
+                        android:textSize="12.0dip"/>
+
+                    <Button
+                        android:id="@+id/btn_stop"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/btn_run"
+                        android:minHeight="0.0dip"
+                        android:minWidth="0.0dip"
+                        android:paddingBottom="2.0dip"
+                        android:paddingLeft="10.0dip"
+                        android:paddingRight="10.0dip"
+                        android:paddingTop="2.0dip"
+                        android:tag="binding_11"
+                        android:textSize="12.0dip"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:tag="binding_12">
+
+                    <Button
+                        android:id="@+id/btn_install_app"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="#ffffff00"
+                        android:minHeight="0.0dip"
+                        android:minWidth="0.0dip"
+                        android:paddingBottom="2.0dip"
+                        android:paddingLeft="10.0dip"
+                        android:paddingRight="10.0dip"
+                        android:paddingTop="2.0dip"
+                        android:tag="binding_13"
+                        android:textColor="#ff333333"
+                        android:textSize="12.0dip"/>
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rv_top"
+        android:layout_marginTop="10.0dip">
+
+        <ProgressBar
+            android:id="@+id/pb_pv"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="3.0dip"
+            android:layout_gravity="center_horizontal"
+            android:background="#ff444444"
+            android:indeterminateDrawable="@android:drawable/progress_indeterminate_horizontal"
+            android:indeterminateOnly="false"
+            android:max="100"
+            android:maxHeight="3.0dip"
+            android:minHeight="3.0dip"
+            android:progressDrawable="@drawable/progress_bar"
+            android:tag="binding_14"/>
+    </RelativeLayout>
+</RelativeLayout>

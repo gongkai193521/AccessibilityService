@@ -1,0 +1,9 @@
+build
+deploy
+*.iml
+.gradle
+.idea
+local.properties
+*.apk
+*.log
+build_number.properties

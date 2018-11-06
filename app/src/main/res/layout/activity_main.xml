@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:tag="layout/activity_main_0">
+
+    <RelativeLayout
+        android:id="@+id/rl_top"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:background="@color/colorPrimaryDark">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_margin="5.0dip"
+            android:background="#ff222222"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingBottom="2.5dip"
+            android:paddingLeft="5.0dip"
+            android:paddingRight="5.0dip"
+            android:paddingTop="2.5dip">
+
+            <ImageView
+                android:layout_width="15.0dip"
+                android:layout_height="15.0dip"
+                android:background="@drawable/vip"
+                android:gravity="center"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5.0dip"
+                android:gravity="center"
+                android:textColor="#ff999999"
+                android:textSize="10sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/rl_basic"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5.0dip"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="5.0dip">
+
+                <ImageView
+                    android:id="@+id/iv_active"
+                    android:layout_width="40.0dip"
+                    android:layout_height="40.0dip"/>
+
+                <TextView
+                    android:id="@+id/tv_active_state"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="10.0dip"
+                    android:layout_toEndOf="@id/iv_active"
+                    android:layout_toRightOf="@id/iv_active"
+                    android:gravity="center"
+                    android:textColor="#ffffffff"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/tv_active_welcom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/rl_basic"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="10.0dip"
+                    android:gravity="center"
+                    android:textColor="#ff999999"
+                    android:textSize="12.0dip"/>
+
+                <TextView
+                    android:id="@+id/tv_active_version"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5.0dip"
+                    android:layout_marginTop="10.0dip"
+                    android:background="#ff222222"
+                    android:padding="2.5dip"
+                    android:textColor="#ffcccccc"
+                    android:textSize="10.0dip"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5.0dip"
+                android:background="#ffee3333"
+                android:orientation="horizontal"
+                android:padding="2.0dip"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="20.0dip"
+                    android:layout_height="20.0dip"
+                    android:layout_gravity="center"
+                    android:background="@drawable/warn"/>
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="2.0dip"
+                    android:ellipsize="end"
+                    android:padding="4.0dip"
+                    android:singleLine="true"
+                    android:text="检测到新版本可用, 点击'检测更新'按钮即可完成自动升级"
+                    android:textColor="#ffffffff"
+                    android:textSize="10.0dip"/>
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/ll_footer"
+        android:layout_below="@id/rl_top"
+        android:background="#ffffffff">
+
+        <GridView
+            android:id="@+id/gv_list"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:gravity="center"
+            android:numColumns="3"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="10.0dip"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@id/ll_footer"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:padding="10.0dip">
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="#ff333333"
+            android:onClick="onLogoff"
+            android:text="退出登陆"
+            android:textColor="#ffeeeeee"/>
+    </LinearLayout>
+</RelativeLayout>
