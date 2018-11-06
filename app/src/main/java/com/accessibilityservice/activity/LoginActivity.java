@@ -50,7 +50,6 @@ public class LoginActivity extends BaseActivity {
     @Override
     public void setupViews(Bundle savedInstanceState) {
         initView();
-        setListener();
     }
 
     private void setListener() {
@@ -83,6 +82,7 @@ public class LoginActivity extends BaseActivity {
         mLoginName = findViewById(R.id.login_name);
         mPasswordView = findViewById(R.id.login_password);
         btnLogin = findViewById(R.id.email_sign_in_button);
+        setListener();
     }
 
     String loginName;

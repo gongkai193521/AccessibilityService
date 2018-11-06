@@ -75,6 +75,7 @@ public class MainActivity extends BaseActivity {
                     UserManager.getInstance().reset();
                     MainActivity.this.hideLoading();
                     MainActivity.this.finish();
+                    startActivity(new Intent(mContext, LoginActivity.class));
                     Toasty.info(MainActivity.this, "退出登录成功", 0, true).show();
                     break;
                 case 5:
