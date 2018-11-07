@@ -1,47 +1,27 @@
 package com.accessibilityservice.activity;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
+import android.widget.ListView;
 
 import com.accessibilityservice.R;
 import com.accessibilityservice.adapter.JsAdapter;
-import com.accessibilityservice.model.JsCategoryModel;
-import com.accessibilityservice.model.JsModel;
+import com.accessibilityservice.model.AppModel;
 
-import org.json.JSONArray;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.ArrayList;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import es.dmoral.toasty.Toasty;
 
 public class ScriptListActivity extends BaseActivity {
-    private String devId = null;
-    private Intent fx;
-    private Handler handler = null;
     private JsAdapter jsAdapter;
-    private JSONArray jsList;
-    private List<JsCategoryModel> list;
+    private ArrayList<AppModel> list;
     private SweetAlertDialog progressDialog;
-
-    private JsModel getJsItem(String str) {
-        for (JsCategoryModel items : this.list) {
-            for (JsModel jsModel : items.getItems()) {
-                if (str.equals(jsModel.getName())) {
-                    return jsModel;
-                }
-            }
-        }
-        return null;
-    }
+    private ListView lv_list;
 
     private void showLoading(String str, String str2) {
-        this.progressDialog.setTitle((CharSequence) str);
+        this.progressDialog.setTitle(str);
         this.progressDialog.setContentText(str2);
         this.progressDialog.setCancelable(false);
         this.progressDialog.show();
@@ -61,8 +41,22 @@ public class ScriptListActivity extends BaseActivity {
         setTitle("已购脚本");
         this.progressDialog = new SweetAlertDialog(this, 5);
         this.progressDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
-        this.jsAdapter = new JsAdapter(getApplicationContext(), this.list);
-//        refresh();
+        lv_list = findViewById(R.id.lv_list);
+        this.jsAdapter = new JsAdapter(mContext);
+        lv_list.setAdapter(jsAdapter);
+        list = new ArrayList<>();
+        AppModel appModel = new AppModel();
+        appModel.setAppName("微鲤看看");
+        appModel.setAppPackage("cn.weli.story");
+        appModel.setAppIcon(R.drawable.wlkk);
+        list.add(appModel);
+        AppModel appModel1 = new AppModel();
+        appModel1.setAppName("极速头条");
+        appModel1.setAppPackage("com.ss.android.article.lite");
+        appModel1.setAppIcon(R.drawable.jstt);
+        list.add(appModel1);
+        jsAdapter.setList(list);
+
     }
 
     protected void onDestroy() {
@@ -73,38 +67,11 @@ public class ScriptListActivity extends BaseActivity {
     }
 
     public void onNormalRuns(View view) {
-        int i = 0;
-        List copyOnWriteArrayList = new CopyOnWriteArrayList();
-        for (JsCategoryModel items : this.list) {
-            for (JsModel jsModel : items.getItems()) {
-                if (jsModel.isSelect()) {
-                    copyOnWriteArrayList.add(jsModel);
-                }
-            }
-        }
-        if (copyOnWriteArrayList.size() == 0) {
-            Toasty.info(this, "请勾选需要执行的脚本", 0, true).show();
-            return;
-        }
         Toasty.info(this, "开始顺序执行", 0, true).show();
     }
 
     public void onRandomRuns(View view) {
-        int i = 0;
-        List copyOnWriteArrayList = new CopyOnWriteArrayList();
-        for (JsCategoryModel items : this.list) {
-            for (JsModel jsModel : items.getItems()) {
-                if (jsModel.isSelect()) {
-                    copyOnWriteArrayList.add(jsModel);
-                }
-            }
-        }
-        if (copyOnWriteArrayList.size() == 0) {
-            Toasty.info(this, "请勾选需要执行的脚本", 0, true).show();
-            return;
-        }
         Toasty.info(this, "开始随机执行", 0, true).show();
-        Collections.shuffle(copyOnWriteArrayList);
     }
 
 
@@ -113,18 +80,8 @@ public class ScriptListActivity extends BaseActivity {
     }
 
     public void reverseSelectAll(View view) {
-        for (JsCategoryModel items : this.list) {
-            for (JsModel jsModel : items.getItems()) {
-                jsModel.setSelect(!jsModel.isSelect());
-            }
-        }
     }
 
     public void selectAll(View view) {
-        for (JsCategoryModel items : this.list) {
-            for (JsModel select : items.getItems()) {
-                select.setSelect(true);
-            }
-        }
     }
 }

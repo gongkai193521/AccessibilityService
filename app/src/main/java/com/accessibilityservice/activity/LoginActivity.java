@@ -111,6 +111,7 @@ public class LoginActivity extends BaseActivity {
         UserManager.getInstance().saveLoginName(loginName);
         Toasty.success(this, "登录成功", 0, true).show();
         startActivity(new Intent(this, MainActivity.class));
+        finish();
     }
 
     private void showLoading(String str, String str2) {

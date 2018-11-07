@@ -3,7 +3,6 @@ package com.accessibilityservice.util;
 import android.accessibilityservice.AccessibilityService;
 import android.content.Intent;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
@@ -103,7 +102,6 @@ public class MyAccessibilityService extends AccessibilityService {
             return;
         String pkgName = accessibilityEvent.getPackageName().toString();
         String clsName = accessibilityEvent.getClassName().toString();
-        Log.i("----", pkgName + "/" + clsName);
         if (TextUtils.isEmpty(pkgName)) {
             AccessPageManager.getInstance().setCurentClsName("");
             AccessPageManager.getInstance().setCurrentPkgName("");
@@ -112,9 +110,6 @@ public class MyAccessibilityService extends AccessibilityService {
             AccessPageManager.getInstance().setCurrentPkgName(pkgName);
             AccessPageManager.getInstance().setCurentClsName(clsName);
         }
-//        for (AccessibilityNodeInfo nodeInfo : MyAccessibilityService.getList()) {
-//            Log.i("----", " == " + nodeInfo.toString());
-//        }
     }
 
     public void onCreate() {

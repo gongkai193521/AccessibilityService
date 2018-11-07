@@ -4,10 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.net.Uri;
+import android.util.Log;
 
 import com.accessibilityservice.MainApplication;
+import com.accessibilityservice.model.ActivityInfo;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import es.dmoral.toasty.Toasty;
 
@@ -86,5 +90,16 @@ public class AppUtils {
         intent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
         intent.setData(Uri.fromParts("package", str, null));
         context.startActivity(intent);
+    }
+
+    public static ActivityInfo getTopActivity() {
+        Matcher matcher = Pattern.compile("\\s*mSurface=Surface\\(name=([^\\s\\/]+)\\/([^\\s]+)\\b").matcher((Shell.exec("dumpsys window w | grep \\/ | grep name=")).trim());
+        ActivityInfo activityInfo = new ActivityInfo();
+        if (matcher.find()) {
+            activityInfo.setPkgName(matcher.group(1).trim());
+            activityInfo.setClsName(matcher.group(2).trim());
+            Log.i("----", activityInfo.getPkgName() + "/" + activityInfo.getClsName());
+        }
+        return activityInfo;
     }
 }

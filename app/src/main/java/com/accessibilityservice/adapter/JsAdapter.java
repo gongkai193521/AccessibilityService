@@ -1,91 +1,60 @@
 package com.accessibilityservice.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-import com.accessibilityservice.model.JsCategoryModel;
+import com.accessibilityservice.MainApplication;
+import com.accessibilityservice.R;
+import com.accessibilityservice.model.AppModel;
+import com.accessibilityservice.service.TaskService;
+import com.accessibilityservice.util.AppUtils;
 
-import java.util.Iterator;
-import java.util.List;
+import es.dmoral.toasty.Toasty;
 
-public class JsAdapter extends BaseAdapter {
-    private Context context;
-    private LayoutInflater inflater;
-    private List<JsCategoryModel> list;
-
-    public JsAdapter(Context context, List list) {
-        this.context = context;
-        this.list = list;
-        this.inflater = LayoutInflater.from(context);
+public class JsAdapter extends BaseListAdapter<AppModel> {
+    public JsAdapter(Context context) {
+        super(context);
     }
 
-    public int getCount() {
-        int i = 0;
-        if (this.list == null) {
-            return 0;
-        }
-        Iterator it = this.list.iterator();
-        while (true) {
-            int i2 = i;
-            if (!it.hasNext()) {
-                return i2;
-            }
-            i = ((JsCategoryModel) it.next()).getItemCount() + i2;
-        }
-    }
-
-    public Object getItem(int i) {
-        if (this.list != null && i >= 0 && i <= getCount()) {
-            int i2 = 0;
-            Iterator it = this.list.iterator();
-            while (true) {
-                int i3 = i2;
-                if (!it.hasNext()) {
-                    break;
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        if (convertView == null) {
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.js_item, null);
+            TextView tv_app = convertView.findViewById(R.id.tv_name);
+            ImageView iv_app = convertView.findViewById(R.id.iv_icon);
+            Button btn_run = convertView.findViewById(R.id.btn_run);
+            Button btn_stop = convertView.findViewById(R.id.btn_stop);
+            final AppModel models = mList.get(position);
+            tv_app.setText(models.getAppName());
+            iv_app.setBackgroundResource(models.getAppIcon());
+            btn_run.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (!AppUtils.isApplicationAvilible(models.getAppPackage())) {
+                        Toasty.success(mContext, "请先安装" + models.getAppName());
+                        return;
+                    }
+                    Toasty.normal(mContext, "开始执行" + models.getAppName() + "脚本");
+                    AppUtils.startAppByPkg(MainApplication.getContext(), models.getAppPackage());
+                    mContext.startService(new Intent(mContext, TaskService.class));
                 }
-                JsCategoryModel jsCategoryModel = (JsCategoryModel) it.next();
-                int itemCount = jsCategoryModel.getItemCount();
-                int i4 = i - i3;
-                if (i4 < itemCount) {
-                    return jsCategoryModel.getItem(i4);
+            });
+            btn_stop.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    MainApplication.scheduledThreadPool.shutdownNow();
+                    mContext.stopService(new Intent(mContext, TaskService.class));
+                    Toasty.success(mContext, "已停止" + models.getAppName() + "脚本");
                 }
-                i2 = i3 + itemCount;
-            }
+            });
         }
-        return null;
+        return convertView;
     }
 
-    public long getItemId(int i) {
-        return (long) i;
-    }
-
-    public int getItemViewType(int i) {
-        if (this.list != null && i >= 0 && i <= getCount()) {
-            int i2 = 0;
-            for (JsCategoryModel itemCount : this.list) {
-                int itemCount2 = itemCount.getItemCount();
-                if (i - i2 == 0) {
-                    return 0;
-                }
-                i2 = itemCount2 + i2;
-            }
-        }
-        return 1;
-    }
-
-    public View getView(int i, View view, ViewGroup viewGroup) {
-        switch (getItemViewType(i)) {
-            case 0:
-            case 1:
-            default:
-                return null;
-        }
-    }
-
-    public int getViewTypeCount() {
-        return 2;
-    }
 }

@@ -90,8 +90,8 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_above="@id/rl_footer"
-        android:layout_below="@id/rl_top"
-        android:layout_alignParentLeft="true">
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/rl_top">
 
         <com.scwang.smartrefresh.layout.header.ClassicsHeader
             android:layout_width="fill_parent"
@@ -101,8 +101,7 @@
             android:id="@+id/lv_list"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background="#ff333333"
-            android:tag="binding_2"/>
+            android:background="#ff333333"/>
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
     <LinearLayout
@@ -110,9 +109,10 @@
         android:layout_width="fill_parent"
         android:layout_height="60.0dip"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
         android:background="#ff333333"
         android:orientation="vertical"
-        android:layout_alignParentLeft="true">
+        android:visibility="gone">
 
         <TextView
             android:layout_width="fill_parent"

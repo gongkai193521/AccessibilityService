@@ -19,9 +19,9 @@ import com.accessibilityservice.BuildConfig;
 import com.accessibilityservice.MainApplication;
 import com.accessibilityservice.R;
 import com.accessibilityservice.manager.UserManager;
+import com.accessibilityservice.service.TaskService;
 import com.accessibilityservice.util.AppUtils;
 import com.accessibilityservice.util.DeviceIdUtils;
-
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -97,15 +97,6 @@ public class MainActivity extends BaseActivity {
     @Override
     public void setupViews(Bundle savedInstanceState) {
         initView();
-//        if (MainApplication.getUiManager().check()) {
-//            if (!AppUtils.isApplicationAvilible("cn.weli.story")) {
-//                ToastUtil.show(mContext, "请安装“微鲤看看”");
-//                return;
-//            }
-//            startService(new Intent(mContext, TaskService.class));
-//        } else {
-//            ToastUtil.show(mContext, "请找到 “辅助操作” 开启辅助功能服务");
-//        }
     }
 
     boolean isActive;
@@ -141,7 +132,7 @@ public class MainActivity extends BaseActivity {
                             return;
                         }
                         startActivity(new Intent(mContext, ScriptListActivity.class));
-                        if (isActive) {
+                        if (!isActive) {
                             Toasty.error(MainActivity.this, "脚本引擎未激活", 0, true).show();
                         }
                         break;

@@ -1,30 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="0.0dip"
-                android:orientation="vertical"
-                android:padding="10.0dip"
-                android:tag="layout/js_item_0">
+                android:padding="10.0dip">
 
     <RelativeLayout
         android:id="@+id/rv_top"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:tag="binding_1">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <RelativeLayout
             android:id="@+id/rl_left"
             android:layout_width="60.0dip"
-            android:layout_height="60.0dip">
+            android:layout_height="60.0dip"
+            android:layout_centerVertical="true">
 
             <ImageView
                 android:id="@+id/iv_icon"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:layout_marginLeft="5.0dip"
-                android:tag="binding_2"/>
+                android:layout_marginLeft="5.0dip"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -36,10 +31,10 @@
                 android:paddingLeft="1.5dip"
                 android:paddingRight="1.5dip"
                 android:paddingTop="1.0dip"
-                android:tag="binding_3"
                 android:text="已选择"
                 android:textColor="#ffffffff"
-                android:textSize="10.0dip"/>
+                android:textSize="10.0dip"
+                android:visibility="gone"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -52,7 +47,6 @@
                 android:id="@+id/tv_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:tag="binding_4"
                 android:textColor="#ffeeeeee"
                 android:textSize="14.0dip"/>
 
@@ -61,8 +55,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10.0dip"
+                android:layout_toRightOf="@id/tv_name"
                 android:orientation="horizontal"
-                android:layout_toRightOf="@id/tv_name">
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -97,31 +92,31 @@
                 android:layout_marginTop="5.0dip"
                 android:ellipsize="end"
                 android:singleLine="true"
-                android:tag="binding_6"
                 android:textColor="#ffffffff"
-                android:textSize="10.0dip"/>
+                android:textSize="10.0dip"
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/tv_money"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
                 android:layout_below="@id/tv_versions"
                 android:layout_marginTop="5.0dip"
-                android:tag="binding_7"
                 android:textColor="#ffeeeeee"
                 android:textSize="10.0dip"
-                android:layout_alignParentLeft="true"/>
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/tv_pv"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
                 android:layout_below="@id/tv_money"
                 android:layout_marginTop="5.0dip"
-                android:tag="binding_8"
                 android:textColor="#ffeeeeee"
                 android:textSize="10.0dip"
-                android:layout_alignParentLeft="true"/>
+                android:visibility="gone"/>
 
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -134,36 +129,31 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10.0dip"
-                    android:orientation="horizontal"
-                    android:tag="binding_9">
+                    android:orientation="horizontal">
 
                     <Button
                         android:id="@+id/btn_run"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="50dp"
+                        android:layout_height="25dp"
                         android:background="#ff6633cc"
-                        android:minHeight="0.0dip"
-                        android:minWidth="0.0dip"
                         android:paddingBottom="2.0dip"
                         android:paddingLeft="10.0dip"
                         android:paddingRight="10.0dip"
                         android:paddingTop="2.0dip"
-                        android:tag="binding_10"
+                        android:text="运行"
                         android:textColor="#ffffffff"
                         android:textSize="12.0dip"/>
 
                     <Button
                         android:id="@+id/btn_stop"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="50dp"
+                        android:layout_height="25dp"
                         android:layout_toRightOf="@id/btn_run"
-                        android:minHeight="0.0dip"
-                        android:minWidth="0.0dip"
                         android:paddingBottom="2.0dip"
                         android:paddingLeft="10.0dip"
                         android:paddingRight="10.0dip"
                         android:paddingTop="2.0dip"
-                        android:tag="binding_11"
+                        android:text="停止"
                         android:textSize="12.0dip"/>
                 </LinearLayout>
 
@@ -171,7 +161,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:tag="binding_12">
+                    android:visibility="gone">
 
                     <Button
                         android:id="@+id/btn_install_app"
@@ -184,7 +174,6 @@
                         android:paddingLeft="10.0dip"
                         android:paddingRight="10.0dip"
                         android:paddingTop="2.0dip"
-                        android:tag="binding_13"
                         android:textColor="#ff333333"
                         android:textSize="12.0dip"/>
                 </LinearLayout>
@@ -196,7 +185,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/rv_top"
-        android:layout_marginTop="10.0dip">
+        android:layout_marginTop="10.0dip"
+        android:visibility="gone">
 
         <ProgressBar
             android:id="@+id/pb_pv"
@@ -210,7 +200,6 @@
             android:max="100"
             android:maxHeight="3.0dip"
             android:minHeight="3.0dip"
-            android:progressDrawable="@drawable/progress_bar"
-            android:tag="binding_14"/>
+            android:progressDrawable="@drawable/progress_bar"/>
     </RelativeLayout>
 </RelativeLayout>
