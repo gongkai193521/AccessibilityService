@@ -31,7 +31,7 @@ public class AppUtils {
     public static void startAppByPkg(Context context, String packagename) {
         Intent intent = isInstall(packagename);
         if (intent == null) {
-            Toasty.error(context, "无法启动该应用，请检查应用是否安装");
+            Toasty.error(context, "无法启动该应用，请检查应用是否安装").show();
         }
         try {
             intent.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -53,7 +53,7 @@ public class AppUtils {
         try {
             intent = getPkgManager().getLaunchIntentForPackage(packagename);
         } catch (Exception e) {
-            Toasty.error(MainApplication.getContext(), "没有检测到安装该APP");
+            Toasty.error(MainApplication.getContext(), "没有检测到安装该APP").show();
         }
         return intent;
     }
@@ -98,8 +98,16 @@ public class AppUtils {
         if (matcher.find()) {
             activityInfo.setPkgName(matcher.group(1).trim());
             activityInfo.setClsName(matcher.group(2).trim());
-            Log.i("----", activityInfo.getPkgName() + "/" + activityInfo.getClsName());
         }
+        Log.i("----", activityInfo.getPkgName() + "/" + activityInfo.getClsName());
         return activityInfo;
+    }
+
+    public static String getTopPkg() {
+        return getTopActivity().getPkgName();
+    }
+
+    public static String getTopCls() {
+        return getTopActivity().getClsName();
     }
 }

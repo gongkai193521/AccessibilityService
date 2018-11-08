@@ -24,7 +24,6 @@ public class MyThread {
                 }
             }
         });
-        this.thread.setDaemon(true);
     }
 
     public void begin() {

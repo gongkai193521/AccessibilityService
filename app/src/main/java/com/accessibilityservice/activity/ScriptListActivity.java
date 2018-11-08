@@ -50,11 +50,11 @@ public class ScriptListActivity extends BaseActivity {
         appModel.setAppPackage("cn.weli.story");
         appModel.setAppIcon(R.drawable.wlkk);
         list.add(appModel);
-        AppModel appModel1 = new AppModel();
-        appModel1.setAppName("极速头条");
-        appModel1.setAppPackage("com.ss.android.article.lite");
-        appModel1.setAppIcon(R.drawable.jstt);
-        list.add(appModel1);
+//        AppModel appModel1 = new AppModel();
+//        appModel1.setAppName("极速头条");
+//        appModel1.setAppPackage("com.ss.android.article.lite");
+//        appModel1.setAppIcon(R.drawable.jstt);
+//        list.add(appModel1);
         jsAdapter.setList(list);
 
     }

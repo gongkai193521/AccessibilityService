@@ -1,11 +1,5 @@
-package com.accessibilityservice.service;
+package com.accessibilityservice.manager;
 
-import android.app.Service;
-import android.content.Intent;
-import android.os.IBinder;
-import android.support.annotation.Nullable;
-
-import com.accessibilityservice.MainApplication;
 import com.accessibilityservice.util.AccessibilityManager;
 import com.accessibilityservice.util.AppUtils;
 import com.accessibilityservice.util.MyAccessibilityService;
@@ -14,36 +8,26 @@ import com.accessibilityservice.util.Shell;
 import java.util.Random;
 
 /**
- * Created by gongkai on 2018/11/5.
+ * Created by gongkai on 2018/11/8.
  */
 
-public class TaskService extends Service {
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
+public class TaskManager {
+    private volatile static TaskManager instance = null;
+
+    private TaskManager(){
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        MainApplication.getExecutorService().submit(mRunnable);
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-    Runnable mRunnable = new Runnable() {
-        @Override
-        public void run() {
-            doTask();
+    public static TaskManager getInstance() {
+        if (instance == null) {
+            synchronized (TaskManager.class) {
+                if (instance == null) {
+                    instance = new TaskManager();
+                }
+            }
         }
-    };
-
-    private void doTask() {
+        return instance;
+    }
+    public void doTask() {
         if (!"cn.weli.story".equals(AppUtils.getTopActivity().getPkgName())) {
             doTask();
             return;
@@ -63,7 +47,7 @@ public class TaskService extends Service {
         doTask();
     }
 
-    private void doTask1() {
+    public void doTask1() {
         if ("com.ss.android.article.lite.activity.MainActivity".equals(AppUtils.getTopCls())) {
             scrollDown(false);
             AccessibilityManager.clickByViewIdForList("com.ss.android.article.lite:id/fs");

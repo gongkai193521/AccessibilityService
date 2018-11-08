@@ -1,7 +1,6 @@
 package com.accessibilityservice.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,13 +10,17 @@ import android.widget.TextView;
 
 import com.accessibilityservice.MainApplication;
 import com.accessibilityservice.R;
+import com.accessibilityservice.manager.TaskManager;
 import com.accessibilityservice.model.AppModel;
-import com.accessibilityservice.service.TaskService;
 import com.accessibilityservice.util.AppUtils;
+import com.accessibilityservice.util.MyThread;
+import com.accessibilityservice.util.Threads;
 
 import es.dmoral.toasty.Toasty;
 
 public class JsAdapter extends BaseListAdapter<AppModel> {
+    Threads threads = new Threads();
+
     public JsAdapter(Context context) {
         super(context);
     }
@@ -37,20 +40,28 @@ public class JsAdapter extends BaseListAdapter<AppModel> {
                 @Override
                 public void onClick(View view) {
                     if (!AppUtils.isApplicationAvilible(models.getAppPackage())) {
-                        Toasty.success(mContext, "请先安装" + models.getAppName());
+                        Toasty.warning(mContext, "请先安装" + models.getAppName()).show();
                         return;
                     }
-                    Toasty.normal(mContext, "开始执行" + models.getAppName() + "脚本");
+                    Toasty.success(mContext, "开始执行" + models.getAppName() + "脚本").show();
                     AppUtils.startAppByPkg(MainApplication.getContext(), models.getAppPackage());
-                    mContext.startService(new Intent(mContext, TaskService.class));
+                    threads.task(new Threads.Fn() {
+                        @Override
+                        public void onRun(MyThread thread) {
+                            super.onRun(thread);
+                            TaskManager.getInstance().doTask();
+                        }
+                    });
                 }
             });
             btn_stop.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    MainApplication.scheduledThreadPool.shutdownNow();
-                    mContext.stopService(new Intent(mContext, TaskService.class));
-                    Toasty.success(mContext, "已停止" + models.getAppName() + "脚本");
+                    if (!MainApplication.getExecutorService().isShutdown()) {
+                        MainApplication.getExecutorService().shutdownNow();
+                    }
+                    Toasty.success(mContext, "已停止" + models.getAppName() + "脚本").show();
+                    threads.release();
                 }
             });
         }

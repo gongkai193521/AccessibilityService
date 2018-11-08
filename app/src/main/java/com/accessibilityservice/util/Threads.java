@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class Threads {
-    private Map<String, Object> map = new HashMap();
+    private Map<String, MyThread> map = new HashMap();
 
     public static class Fn {
         public void onErr(Exception exception) {
