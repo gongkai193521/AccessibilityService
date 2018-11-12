@@ -14,7 +14,7 @@ import java.util.Random;
 public class TaskManager {
     private volatile static TaskManager instance = null;
 
-    private TaskManager(){
+    private TaskManager() {
     }
 
     public static TaskManager getInstance() {
@@ -27,9 +27,13 @@ public class TaskManager {
         }
         return instance;
     }
-    public void doTask() {
+
+    public void doTask(boolean isRun) {
+        if (!isRun) {
+            return;
+        }
         if (!"cn.weli.story".equals(AppUtils.getTopActivity().getPkgName())) {
-            doTask();
+            doTask(isRun);
             return;
         }
         if ("cn.etouch.ecalendar.MainActivity".equals(AppUtils.getTopCls())) {
@@ -44,7 +48,7 @@ public class TaskManager {
             scrollDown(true);
             MyAccessibilityService.back();
         }
-        doTask();
+        doTask(isRun);
     }
 
     public void doTask1() {
@@ -56,7 +60,6 @@ public class TaskManager {
             scrollDown(true);
             MyAccessibilityService.back();
         }
-        doTask();
     }
 
     public static void scrollDown(boolean isDetails) {

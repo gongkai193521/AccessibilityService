@@ -49,7 +49,7 @@ public class JsAdapter extends BaseListAdapter<AppModel> {
                         @Override
                         public void onRun(MyThread thread) {
                             super.onRun(thread);
-                            TaskManager.getInstance().doTask();
+                            TaskManager.getInstance().doTask(thread.isRun());
                         }
                     });
                 }

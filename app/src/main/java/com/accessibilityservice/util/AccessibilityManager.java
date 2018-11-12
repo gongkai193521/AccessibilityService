@@ -8,7 +8,9 @@ import android.util.Log;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.accessibilityservice.MainApplication.mHandler;
 
@@ -58,6 +60,56 @@ public class AccessibilityManager {
             }
         }
         return false;
+    }
+
+    private static Map<String, Object> getNodeItem(AccessibilityNodeInfo accessibilityNodeInfo) {
+        if (accessibilityNodeInfo == null) {
+            return null;
+        }
+        String charSequence;
+        Map<String, Object> map = new HashMap<>();
+        CharSequence text = accessibilityNodeInfo.getText();
+        CharSequence contentDescription = accessibilityNodeInfo.getContentDescription();
+        if (text != null) {
+            charSequence = text.toString();
+            if (!"".equals(charSequence)) {
+                map.put("text", charSequence);
+            }
+        }
+        if (contentDescription != null) {
+            charSequence = contentDescription.toString();
+            if (!"".equals(charSequence)) {
+                map.put("desc", charSequence);
+            }
+        }
+        map.put("className", accessibilityNodeInfo.getClassName());
+        map.put("id", accessibilityNodeInfo.getViewIdResourceName());
+        map.put("isPassword", accessibilityNodeInfo.isPassword());
+        map.put("isChecked", accessibilityNodeInfo.isChecked());
+        map.put("isClickable", accessibilityNodeInfo.isClickable());
+        map.put("isCheckable", accessibilityNodeInfo.isCheckable());
+        map.put("isEditable", accessibilityNodeInfo.isEditable());
+        map.put("isFocused", accessibilityNodeInfo.isFocused());
+        map.put("isEnabled", accessibilityNodeInfo.isEnabled());
+        map.put("isLongClickable", accessibilityNodeInfo.isLongClickable());
+        map.put("isSelected", accessibilityNodeInfo.isSelected());
+        map.put("isScrollable", accessibilityNodeInfo.isScrollable());
+        Rect rect = new Rect();
+        accessibilityNodeInfo.getBoundsInParent(rect);
+        Rect rect2 = new Rect();
+        accessibilityNodeInfo.getBoundsInScreen(rect2);
+        map.put("boundsInParent", GsonUtils.toJson(rect));
+        map.put("boundsInScreen", GsonUtils.toJson(rect2));
+        return map;
+    }
+
+    public static List<Map<String, Object>> getNodeItems() {
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (int i = 0; i < MyAccessibilityService.getList().size(); i++) {
+            list.add(getNodeItem(MyAccessibilityService.getList().get(i)));
+            Log.i("----", " == " + getNodeItem(MyAccessibilityService.getList().get(i)).toString());
+        }
+        return list;
     }
 
     public static void clear() {
