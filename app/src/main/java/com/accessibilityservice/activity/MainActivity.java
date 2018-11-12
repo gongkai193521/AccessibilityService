@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.TimeUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -22,6 +23,7 @@ import com.accessibilityservice.manager.UserManager;
 import com.accessibilityservice.service.TaskService;
 import com.accessibilityservice.util.AppUtils;
 import com.accessibilityservice.util.DeviceIdUtils;
+import com.accessibilityservice.util.TimeUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,7 +43,7 @@ public class MainActivity extends BaseActivity {
     private String[] names = new String[]{"已购脚本", "刷新引擎", "检测更新", "手控管理",
             "应用详情", "设备标识", "清理缓存", "反馈建议", "敬请期待"};
     private SweetAlertDialog progressDialog;
-    private TextView tv_active_state, tv_active_welcom, tv_active_version;
+    private TextView tv_active_state, tv_active_welcom, tv_active_version,tv_expiry_date;
 
     private Handler handler = new Handler(Looper.getMainLooper()) {
         public void handleMessage(Message message) {
@@ -103,14 +105,16 @@ public class MainActivity extends BaseActivity {
 
     private void initView() {
         setTitle("控制台");
-//        updatedExpireIn();
         this.progressDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
         this.progressDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
         startService();
+
+        tv_expiry_date = findViewById(R.id.tv_expiry_date);
+        tv_expiry_date.setText("服务到期 : "+TimeUtil.fomartTime(UserManager.getInstance().getLogin().expiry_date));
         GridView gridView = findViewById(R.id.gv_list);
         tv_active_state = findViewById(R.id.tv_active_state);
         tv_active_welcom = findViewById(R.id.tv_active_welcom);
-        tv_active_welcom.setText("欢迎您，" + UserManager.getInstance().getLoginname());
+        tv_active_welcom.setText("欢迎您，" + UserManager.getInstance().getLogin().username);
         tv_active_version = findViewById(R.id.tv_active_version);
         tv_active_version.setText("引擎版本：" + BuildConfig.VERSION_NAME);
         List arrayList = new ArrayList();
@@ -215,18 +219,6 @@ public class MainActivity extends BaseActivity {
         handler.sendEmptyMessageDelayed(3, 5000);
     }
 
-//    private void updatedExpireIn() {
-//        try {
-//            String string = this.userInfoSp.getString("expireInFormat", "0");
-//            if ("0".equals(string)) {
-//                this.mainBinding.setExpireIn("终身使用");
-//                return;
-//            }
-//            this.mainBinding.setExpireIn("服务到期：" + string);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     protected void onDestroy() {
         release();

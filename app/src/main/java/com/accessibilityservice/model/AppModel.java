@@ -9,7 +9,7 @@ import java.util.List;
 public class AppModel {
     private String appPackage;
     private String appName;
-    private int  appIcon;
+    private String  appIcon;
     private Long planTime;//计划时间
     private Long executeTime; //已经在执行的时间
     private List<AppPageModel> mPages;//页面
@@ -30,11 +30,11 @@ public class AppModel {
         this.appName = appName;
     }
 
-    public int getAppIcon() {
+    public String getAppIcon() {
         return appIcon;
     }
 
-    public void setAppIcon(int appIcon) {
+    public void setAppIcon(String appIcon) {
         this.appIcon = appIcon;
     }
 
@@ -64,9 +64,9 @@ public class AppModel {
 
     public class AppPageModel {
         private String className;//页面类名
-        private String opt;  //操作 1 点击  2 滑动
-        private Long executeTime; //执行时间   0代表永久
-        private List<ViewModel> mViewModels;//控件
+        private String type;  //操作 1 列表  2 详情页
+        private Long planTime; //执行时间   0代表永久
+        private List<String> views;//控件
 
         public String getClassName() {
             return className;
@@ -76,49 +76,21 @@ public class AppModel {
             this.className = className;
         }
 
-        public String getOpt() {
-            return opt;
+        public String gettype() {
+            return type;
         }
 
-        public void setOpt(String opt) {
-            this.opt = opt;
+        public void settype(String opt) {
+            this.type = opt;
         }
 
         public Long getExecuteTime() {
             return executeTime;
         }
 
-        public void setExecuteTime(Long executeTime) {
-            this.executeTime = executeTime;
+        public void setExecuteTime(Long planTime) {
+            this.planTime = planTime;
         }
 
-        public List<ViewModel> getViewModels() {
-            return mViewModels;
         }
-
-        public void setViewModels(List<ViewModel> viewModels) {
-            mViewModels = viewModels;
-        }
-    }
-
-    public class ViewModel {
-        private String viewId;//控件id
-        private String opt; //控件行为 1 点击 2 滑动
-
-        public String getViewId() {
-            return viewId;
-        }
-
-        public void setViewId(String viewId) {
-            this.viewId = viewId;
-        }
-
-        public String getOpt() {
-            return opt;
-        }
-
-        public void setOpt(String opt) {
-            this.opt = opt;
-        }
-    }
 }

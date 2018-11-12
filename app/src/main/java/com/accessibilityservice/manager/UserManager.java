@@ -1,7 +1,7 @@
 package com.accessibilityservice.manager;
 
-import android.text.TextUtils;
 
+import com.accessibilityservice.model.Client_User;
 import com.accessibilityservice.util.SharedPreferencesUtils;
 
 /**
@@ -29,18 +29,25 @@ public class UserManager {
      * @return
      */
     public boolean isLogin() {
-        return !TextUtils.isEmpty(getLoginname());
+        return getLogin()!=null;
     }
 
-    public void saveLoginName(String loginName) {
-        SharedPreferencesUtils.putValue(LOGINNAME, loginName);
+    private Client_User mClient_User;
+
+    public void saveLogin(Client_User mClient_User) {
+        this.mClient_User=mClient_User;
+        SharedPreferencesUtils.putValue(LOGINNAME, mClient_User);
     }
 
-    public String getLoginname() {
-        return SharedPreferencesUtils.getValue(LOGINNAME, null, String.class);
+    public Client_User getLogin() {
+        if (mClient_User==null) {
+            mClient_User=SharedPreferencesUtils.getValue(LOGINNAME, null, Client_User.class);
+        }
+        return mClient_User;
     }
 
     public boolean reset() {
+        mClient_User=null;
         return SharedPreferencesUtils.remove(LOGINNAME);
     }
 

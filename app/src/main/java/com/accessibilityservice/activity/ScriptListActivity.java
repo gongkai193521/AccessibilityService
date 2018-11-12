@@ -8,8 +8,16 @@ import android.widget.ListView;
 import com.accessibilityservice.R;
 import com.accessibilityservice.adapter.JsAdapter;
 import com.accessibilityservice.model.AppModel;
+import com.accessibilityservice.util.GsonUtils;
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.FindCallback;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import es.dmoral.toasty.Toasty;
@@ -44,18 +52,26 @@ public class ScriptListActivity extends BaseActivity {
         lv_list = findViewById(R.id.lv_list);
         this.jsAdapter = new JsAdapter(mContext);
         lv_list.setAdapter(jsAdapter);
-        list = new ArrayList<>();
-        AppModel appModel = new AppModel();
-        appModel.setAppName("微鲤看看");
-        appModel.setAppPackage("cn.weli.story");
-        appModel.setAppIcon(R.drawable.wlkk);
-        list.add(appModel);
-//        AppModel appModel1 = new AppModel();
-//        appModel1.setAppName("极速头条");
-//        appModel1.setAppPackage("com.ss.android.article.lite");
-//        appModel1.setAppIcon(R.drawable.jstt);
-//        list.add(appModel1);
-        jsAdapter.setList(list);
+
+        AVQuery<AVObject> mQuery=new AVQuery<>("News_Platform");
+        mQuery.findInBackground(new FindCallback<AVObject>() {
+            @Override
+            public void done(List<AVObject> resList, AVException e) {
+                list = new ArrayList<>();
+                for (AVObject mAVObject:resList){
+                    AppModel appModel = new AppModel();
+                    String strJson=mAVObject.getString("data");
+                    List<AppModel.AppPageModel> mAppPages=new Gson().fromJson(strJson,new TypeToken<List<AppModel.AppPageModel>>(){}.getType());
+                    appModel.setPages(mAppPages);
+                    appModel.setPlanTime(mAVObject.getLong("platform_plan"));
+                    appModel.setAppIcon(mAVObject.getString("platform_logo"));
+                    appModel.setAppPackage(mAVObject.getString("platform_package"));
+                    appModel.setAppName(mAVObject.getString("platform_name"));
+                    list.add(appModel);
+                }
+                jsAdapter.setList(list);
+            }
+        });
 
     }
 

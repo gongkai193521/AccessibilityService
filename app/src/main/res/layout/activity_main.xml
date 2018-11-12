@@ -94,6 +94,16 @@
                     android:padding="2.5dip"
                     android:textColor="#ffcccccc"
                     android:textSize="10.0dip"/>
+
+                <TextView
+                    android:id="@+id/tv_expiry_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5.0dip"
+                    android:layout_marginTop="10.0dip"
+                    android:padding="2.5dip"
+                    android:textColor="#ffcccccc"
+                    android:textSize="10.0dip"/>
             </LinearLayout>
 
             <LinearLayout

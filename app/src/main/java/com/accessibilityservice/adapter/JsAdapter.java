@@ -15,6 +15,7 @@ import com.accessibilityservice.model.AppModel;
 import com.accessibilityservice.util.AppUtils;
 import com.accessibilityservice.util.MyThread;
 import com.accessibilityservice.util.Threads;
+import com.bumptech.glide.Glide;
 
 import es.dmoral.toasty.Toasty;
 
@@ -35,7 +36,7 @@ public class JsAdapter extends BaseListAdapter<AppModel> {
             Button btn_stop = convertView.findViewById(R.id.btn_stop);
             final AppModel models = mList.get(position);
             tv_app.setText(models.getAppName());
-            iv_app.setBackgroundResource(models.getAppIcon());
+            Glide.with(parent).load(models.getAppIcon()).into(iv_app);
             btn_run.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

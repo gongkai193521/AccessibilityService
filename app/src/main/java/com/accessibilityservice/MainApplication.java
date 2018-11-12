@@ -8,6 +8,7 @@ import android.os.Looper;
 import android.os.Message;
 
 import com.accessibilityservice.manager.UiManager;
+import com.avos.avoscloud.AVOSCloud;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -38,6 +39,7 @@ public class MainApplication extends Application {
         scheduledThreadPool = Executors.newScheduledThreadPool(5);
         mContext = this.getApplicationContext();
         uiManager = new UiManager(this);
+        AVOSCloud.initialize(this,"IeHzWPIb9qkRsst7TjOcJ2z6-gzGzoHsz","IuA2ExBjjt6Dd2lCAci2wIXi");
     }
 
     public static ScheduledExecutorService getExecutorService() {
