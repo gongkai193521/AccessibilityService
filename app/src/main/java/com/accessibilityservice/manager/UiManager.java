@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
-import com.accessibilityservice.util.MyAccessibilityService;
+import com.accessibilityservice.service.MyAccessibilityService;
 import com.accessibilityservice.util.Selector;
 
 import org.json.JSONArray;

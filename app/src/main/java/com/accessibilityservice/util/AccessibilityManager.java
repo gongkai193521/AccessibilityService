@@ -7,6 +7,8 @@ import android.os.Message;
 import android.util.Log;
 import android.view.accessibility.AccessibilityNodeInfo;
 
+import com.accessibilityservice.service.MyAccessibilityService;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,9 +35,7 @@ public class AccessibilityManager {
                     nodeInfo.getBoundsInScreen(rect2);
                     Shell.execute("input tap " + rect2.left + " " + rect2.top);
                     mList.add(text);
-                    Message message = mHandler.obtainMessage();
-                    message.obj = "阅读" + text;
-                    mHandler.sendMessage(message);
+                    sendMsg("阅读" + text);
                     break;
                 }
             }
@@ -46,20 +46,25 @@ public class AccessibilityManager {
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     public static boolean clickByViewId(String viewId) {
         for (AccessibilityNodeInfo nodeInfo : MyAccessibilityService.getList()) {
-            if (viewId.equals(nodeInfo.getViewIdResourceName())
-                    && nodeInfo.getText() != null) {
+            if (viewId.equals(nodeInfo.getViewIdResourceName())) {
                 Rect rect2 = new Rect();
                 nodeInfo.getBoundsInScreen(rect2);
                 Shell.execute("input tap " + rect2.left + " " + rect2.top);
-                final String text = nodeInfo.getText().toString();
-                Log.i("----", "text == " + text);
-                Message message = mHandler.obtainMessage();
-                message.obj = "点击" + text;
-                mHandler.sendMessage(message);
+                if (nodeInfo.getText() != null) {
+                    String text = nodeInfo.getText().toString();
+                    Log.i("----", "text == " + text);
+                    sendMsg("点击" + text);
+                }
                 break;
             }
         }
         return false;
+    }
+
+    public static void sendMsg(String msg) {
+        Message message = mHandler.obtainMessage();
+        message.obj = msg;
+        mHandler.sendMessage(message);
     }
 
     private static Map<String, Object> getNodeItem(AccessibilityNodeInfo accessibilityNodeInfo) {

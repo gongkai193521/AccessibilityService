@@ -1,4 +1,4 @@
-package com.accessibilityservice.util;
+package com.accessibilityservice.service;
 
 import android.accessibilityservice.AccessibilityService;
 import android.content.Intent;
@@ -95,7 +95,6 @@ public class MyAccessibilityService extends AccessibilityService {
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent accessibilityEvent) {
-        AccessibilityManager.getNodeItems();
     }
 
     public void onCreate() {

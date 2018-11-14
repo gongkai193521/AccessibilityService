@@ -23,6 +23,7 @@ import com.accessibilityservice.manager.UserManager;
 import com.accessibilityservice.service.TaskService;
 import com.accessibilityservice.util.AppUtils;
 import com.accessibilityservice.util.DeviceIdUtils;
+import com.accessibilityservice.util.Shell;
 import com.accessibilityservice.util.TimeUtil;
 
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class MainActivity extends BaseActivity {
     private String[] names = new String[]{"已购脚本", "刷新引擎", "检测更新", "手控管理",
             "应用详情", "设备标识", "清理缓存", "反馈建议", "敬请期待"};
     private SweetAlertDialog progressDialog;
-    private TextView tv_active_state, tv_active_welcom, tv_active_version,tv_expiry_date;
+    private TextView tv_active_state, tv_active_welcom, tv_active_version, tv_expiry_date;
 
     private Handler handler = new Handler(Looper.getMainLooper()) {
         public void handleMessage(Message message) {
@@ -65,13 +66,16 @@ public class MainActivity extends BaseActivity {
                             }).show();
                     break;
                 case 2:
-                    loadIcon(false);
-                    Toasty.error(MainActivity.this, "脚本服务启用失败, 请重试", 0, true).show();
-                    MainActivity.this.hideLoading();
+                    if (Shell.isRoot() && Shell.checkRootExecutable()) {
+                        loadIcon(true);
+                        MainActivity.this.hideLoading();
+                    } else {
+                        loadIcon(false);
+                        Toasty.error(MainActivity.this, "脚本服务启用失败, 请重试", 0, true).show();
+                        MainActivity.this.hideLoading();
+                    }
                     break;
                 case 3:
-                    loadIcon(true);
-                    MainActivity.this.hideLoading();
                     break;
                 case 4:
                     UserManager.getInstance().reset();
@@ -110,7 +114,7 @@ public class MainActivity extends BaseActivity {
         startService();
 
         tv_expiry_date = findViewById(R.id.tv_expiry_date);
-        tv_expiry_date.setText("服务到期 : "+TimeUtil.fomartTime(UserManager.getInstance().getLogin().expiry_date));
+        tv_expiry_date.setText("服务到期 : " + TimeUtil.fomartTime(UserManager.getInstance().getLogin().expiry_date));
         GridView gridView = findViewById(R.id.gv_list);
         tv_active_state = findViewById(R.id.tv_active_state);
         tv_active_welcom = findViewById(R.id.tv_active_welcom);
@@ -215,10 +219,9 @@ public class MainActivity extends BaseActivity {
     }
 
     private void startService() {
-        showLoading("正在启动脚本引擎...", "预计10 ~ 20秒完成, 请耐心等待..");
-        handler.sendEmptyMessageDelayed(3, 5000);
+        showLoading("正在启动脚本引擎...", "预计3 ~ 5秒完成, 请耐心等待..");
+        handler.sendEmptyMessageDelayed(2, 3000);
     }
-
 
     protected void onDestroy() {
         release();

@@ -9,7 +9,7 @@ import java.util.List;
 public class AppModel {
     private String appPackage;
     private String appName;
-    private String  appIcon;
+    private String appIcon;
     private Long planTime;//计划时间
     private Long executeTime; //已经在执行的时间
     private List<AppPageModel> mPages;//页面
@@ -76,21 +76,28 @@ public class AppModel {
             this.className = className;
         }
 
-        public String gettype() {
+        public String getType() {
             return type;
         }
 
-        public void settype(String opt) {
-            this.type = opt;
+        public void setType(String type) {
+            this.type = type;
         }
 
-        public Long getExecuteTime() {
-            return executeTime;
+        public Long getPlanTime() {
+            return planTime;
         }
 
-        public void setExecuteTime(Long planTime) {
+        public void setPlanTime(Long planTime) {
             this.planTime = planTime;
         }
 
+        public List<String> getViews() {
+            return views;
         }
+
+        public void setViews(List<String> views) {
+            this.views = views;
+        }
+    }
 }

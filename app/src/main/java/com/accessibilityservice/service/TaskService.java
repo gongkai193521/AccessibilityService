@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import com.accessibilityservice.MainApplication;
 import com.accessibilityservice.util.AccessibilityManager;
 import com.accessibilityservice.util.AppUtils;
-import com.accessibilityservice.util.MyAccessibilityService;
 import com.accessibilityservice.util.Shell;
 
 import java.util.Random;

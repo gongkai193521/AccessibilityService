@@ -13,9 +13,10 @@ import com.accessibilityservice.R;
 import com.accessibilityservice.manager.TaskManager;
 import com.accessibilityservice.model.AppModel;
 import com.accessibilityservice.util.AppUtils;
-import com.accessibilityservice.util.MyThread;
 import com.accessibilityservice.util.Threads;
 import com.bumptech.glide.Glide;
+
+import java.util.concurrent.TimeUnit;
 
 import es.dmoral.toasty.Toasty;
 
@@ -45,21 +46,26 @@ public class JsAdapter extends BaseListAdapter<AppModel> {
                         return;
                     }
                     Toasty.success(mContext, "开始执行" + models.getAppName() + "脚本").show();
-                    AppUtils.startAppByPkg(MainApplication.getContext(), models.getAppPackage());
-                    threads.task(new Threads.Fn() {
+                    MainApplication.getExecutorService().schedule(new Runnable() {
                         @Override
-                        public void onRun(MyThread thread) {
-                            super.onRun(thread);
-                            TaskManager.getInstance().doTask(thread.isRun());
+                        public void run() {
+                            TaskManager.getInstance().doTask(models);
                         }
-                    });
+                    }, 1, TimeUnit.SECONDS);
+//                    threads.task(new Threads.Fn() {
+//                        @Override
+//                        public void onRun(MyThread thread) {
+//                            super.onRun(thread);
+//
+//                        }
+//                    });
                 }
             });
             btn_stop.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (!MainApplication.getExecutorService().isShutdown()) {
-                        MainApplication.getExecutorService().shutdownNow();
+                        MainApplication.getExecutorService().shutdown();
                     }
                     Toasty.success(mContext, "已停止" + models.getAppName() + "脚本").show();
                     threads.release();
