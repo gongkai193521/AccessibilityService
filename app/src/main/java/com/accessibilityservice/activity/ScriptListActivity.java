@@ -2,7 +2,6 @@ package com.accessibilityservice.activity;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
@@ -73,10 +72,12 @@ public class ScriptListActivity extends BaseActivity {
 
     public void onNormalRuns(View view) {
         Toasty.info(this, "开始顺序执行", 0, true).show();
+        execute();
     }
 
     public void onRandomRuns(View view) {
         Toasty.info(this, "开始随机执行", 0, true).show();
+        execute();
     }
 
 
@@ -122,11 +123,9 @@ public class ScriptListActivity extends BaseActivity {
     }
 
     public void reverseSelectAll(View view) {
-        execute();
     }
 
     public void selectAll(View view) {
-        execute();
     }
 
     private void execute() {
@@ -134,15 +133,13 @@ public class ScriptListActivity extends BaseActivity {
             Toasty.error(mContext, "脚本列表为空").show();
             return;
         }
-        Toasty.success(mContext, "开始顺序执行脚本").show();
-        for (final AppModel models : list) {
-            Log.i("----", " models== " +models );
-            MainApplication.getExecutorService().execute(new Runnable() {
-                @Override
-                public void run() {
+        MainApplication.getExecutorService().execute(new Runnable() {
+            @Override
+            public void run() {
+                for (AppModel models : list) {
                     TaskManager.getInstance().task(models);
                 }
-            });
-        }
+            }
+        });
     }
 }
