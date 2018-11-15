@@ -20,7 +20,8 @@ import java.util.Random;
 
 public class TaskManager {
     private volatile static TaskManager instance = null;
-    public static boolean isRun = true;
+    public static boolean isStop = false;//停止单个
+    public static boolean isAllStop = false;//全部停止
     private static long runStartTime;
     private static AppModel appModel;
 
@@ -42,7 +43,7 @@ public class TaskManager {
 
     //停止执行
     private boolean isStop() {
-        if (!isRun || System.currentTimeMillis() - runStartTime >= appModel.getPlanTime()) {
+        if (isStop || isAllStop || System.currentTimeMillis() - runStartTime >= appModel.getPlanTime()) {
             Log.i("----", " 停止执行== " + appModel.getAppName() + "脚本");
             AccessibilityManager.sendMsg("已停止执行脚本");
             Shell.exec("am force-stop " + appModel.getAppPackage(), true);
@@ -60,7 +61,6 @@ public class TaskManager {
         Log.i("----", " 开始执行== " + appModel.getAppName() + "脚本");
         Log.i("----", " appmodel== " + GsonUtils.toJson(appModel));
         runStartTime = System.currentTimeMillis();
-        TaskManager.isRun = true;
         doTask(appModel);
     }
 

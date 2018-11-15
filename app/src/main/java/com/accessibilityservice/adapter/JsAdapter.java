@@ -47,7 +47,7 @@ public class JsAdapter extends BaseListAdapter<AppModel> {
             btn_stop.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    TaskManager.isRun = false;
+                    TaskManager.isStop = true;
                     Toasty.success(mContext, "已停止" + models.getAppName() + "脚本").show();
                 }
             });

@@ -134,7 +134,8 @@ public class MyAccessibilityService extends AccessibilityService {
         switch (key) {
             case KeyEvent.KEYCODE_VOLUME_DOWN:
                 Log.i("----", "KEYCODE_VOLUME_DOWN");
-                TaskManager.isRun = false;
+                TaskManager.isStop = true;
+                TaskManager.isAllStop = true;
                 break;
             case KeyEvent.KEYCODE_VOLUME_UP:
                 Log.i("----", "KEYCODE_VOLUME_UP");
