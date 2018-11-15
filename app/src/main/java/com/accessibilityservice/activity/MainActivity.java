@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.TimeUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -134,8 +133,8 @@ public class MainActivity extends BaseActivity {
             public void onItemClick(AdapterView adapterView, View view, int i, long j) {
                 switch (i) {
                     case 0:
-                        if (System.currentTimeMillis()>UserManager.getInstance().getLogin().expiry_date){
-                            Toasty.normal(mContext, "服务已到期,请续费!");
+                        if (System.currentTimeMillis() > UserManager.getInstance().getLogin().expiry_date) {
+                            Toasty.normal(mContext, "服务已到期,请续费!").show();
                             return;
                         }
                         if (!MainApplication.getUiManager().check()) {
