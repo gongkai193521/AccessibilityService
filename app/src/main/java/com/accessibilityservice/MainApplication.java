@@ -10,8 +10,10 @@ import android.os.Message;
 import com.accessibilityservice.manager.UiManager;
 import com.avos.avoscloud.AVOSCloud;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import es.dmoral.toasty.Toasty;
 
@@ -20,7 +22,7 @@ import es.dmoral.toasty.Toasty;
  */
 
 public class MainApplication extends Application {
-    private static ScheduledExecutorService scheduledThreadPool;
+    private static ExecutorService executorService;
     private static Context mContext;
     private static UiManager uiManager;
     private static PackageManager pm;
@@ -36,14 +38,14 @@ public class MainApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        scheduledThreadPool = Executors.newScheduledThreadPool(5);
+        executorService = new ThreadPoolExecutor(5, Integer.MAX_VALUE, 0, TimeUnit.MILLISECONDS, new SynchronousQueue<Runnable>());
         mContext = this.getApplicationContext();
         uiManager = new UiManager(this);
-        AVOSCloud.initialize(this,"IeHzWPIb9qkRsst7TjOcJ2z6-gzGzoHsz","IuA2ExBjjt6Dd2lCAci2wIXi");
+        AVOSCloud.initialize(this, "IeHzWPIb9qkRsst7TjOcJ2z6-gzGzoHsz", "IuA2ExBjjt6Dd2lCAci2wIXi");
     }
 
-    public static ScheduledExecutorService getExecutorService() {
-        return scheduledThreadPool;
+    public static ExecutorService getExecutorService() {
+        return executorService;
     }
 
     public static Context getContext() {

@@ -12,17 +12,11 @@ import com.accessibilityservice.MainApplication;
 import com.accessibilityservice.R;
 import com.accessibilityservice.manager.TaskManager;
 import com.accessibilityservice.model.AppModel;
-import com.accessibilityservice.util.AppUtils;
-import com.accessibilityservice.util.Threads;
 import com.bumptech.glide.Glide;
-
-import java.util.concurrent.TimeUnit;
 
 import es.dmoral.toasty.Toasty;
 
 public class JsAdapter extends BaseListAdapter<AppModel> {
-    Threads threads = new Threads();
-
     public JsAdapter(Context context) {
         super(context);
     }
@@ -41,34 +35,20 @@ public class JsAdapter extends BaseListAdapter<AppModel> {
             btn_run.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (!AppUtils.isApplicationAvilible(models.getAppPackage())) {
-                        Toasty.warning(mContext, "请先安装" + models.getAppName()).show();
-                        return;
-                    }
                     Toasty.success(mContext, "开始执行" + models.getAppName() + "脚本").show();
-                    MainApplication.getExecutorService().schedule(new Runnable() {
+                    MainApplication.getExecutorService().execute(new Runnable() {
                         @Override
                         public void run() {
-                            TaskManager.getInstance().doTask(models);
+                            TaskManager.getInstance().task(models);
                         }
-                    }, 1, TimeUnit.SECONDS);
-//                    threads.task(new Threads.Fn() {
-//                        @Override
-//                        public void onRun(MyThread thread) {
-//                            super.onRun(thread);
-//
-//                        }
-//                    });
+                    });
                 }
             });
             btn_stop.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (!MainApplication.getExecutorService().isShutdown()) {
-                        MainApplication.getExecutorService().shutdown();
-                    }
+                    TaskManager.isRun = false;
                     Toasty.success(mContext, "已停止" + models.getAppName() + "脚本").show();
-                    threads.release();
                 }
             });
         }

@@ -2,8 +2,12 @@ package com.accessibilityservice.service;
 
 import android.accessibilityservice.AccessibilityService;
 import android.content.Intent;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+
+import com.accessibilityservice.manager.TaskManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,6 +99,11 @@ public class MyAccessibilityService extends AccessibilityService {
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent accessibilityEvent) {
+        int eventType = accessibilityEvent.getEventType();
+        switch (eventType) {
+            case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
+                break;
+        }
     }
 
     public void onCreate() {
@@ -117,5 +126,20 @@ public class MyAccessibilityService extends AccessibilityService {
     public boolean onUnbind(Intent intent) {
         instance = null;
         return super.onUnbind(intent);
+    }
+
+    @Override
+    protected boolean onKeyEvent(KeyEvent event) {
+        int key = event.getKeyCode();
+        switch (key) {
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                Log.i("----", "KEYCODE_VOLUME_DOWN");
+                TaskManager.isRun = false;
+                break;
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                Log.i("----", "KEYCODE_VOLUME_UP");
+                break;
+        }
+        return super.onKeyEvent(event);
     }
 }

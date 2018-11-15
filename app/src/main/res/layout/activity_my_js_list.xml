@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <RelativeLayout
         android:id="@+id/rl_top"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
         android:background="#ff333333">
 
         <LinearLayout
@@ -45,7 +43,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5.0dip"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="fill_parent"
@@ -73,8 +72,6 @@
             android:layout_centerInParent="true"
             android:layout_marginRight="10.0dip"
             android:background="#ff222222"
-            android:minHeight="0.0dip"
-            android:minWidth="0.0dip"
             android:onClick="onRefresh"
             android:paddingBottom="5.0dip"
             android:paddingLeft="15.0dip"
@@ -112,7 +109,7 @@
         android:layout_alignParentLeft="true"
         android:background="#ff333333"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <TextView
             android:layout_width="fill_parent"
@@ -127,7 +124,8 @@
             android:paddingTop="2.0dip"
             android:text="按下音量键减, 可停止全部脚本"
             android:textColor="#ff999999"
-            android:textSize="10.0dip"/>
+            android:textSize="10.0dip"
+            android:visibility="visible"/>
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -143,7 +141,8 @@
                 android:onClick="selectAll"
                 android:text="全选"
                 android:textColor="#ffffffff"
-                android:textSize="13.0dip"/>
+                android:textSize="13.0dip"
+                android:visibility="gone"/>
 
             <Button
                 android:id="@+id/btn_reverse_select_all"
@@ -154,7 +153,8 @@
                 android:onClick="reverseSelectAll"
                 android:text="反选"
                 android:textColor="#ffffffff"
-                android:textSize="13.0dip"/>
+                android:textSize="13.0dip"
+                android:visibility="gone"/>
 
             <Button
                 android:id="@+id/btn_normal_runs"

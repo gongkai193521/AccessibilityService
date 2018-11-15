@@ -50,6 +50,7 @@ public class AccessibilityManager {
                 Rect rect2 = new Rect();
                 nodeInfo.getBoundsInScreen(rect2);
                 Shell.execute("input tap " + rect2.left + " " + rect2.top);
+                Log.i("----", "点击viewId== " + viewId);
                 if (nodeInfo.getText() != null) {
                     String text = nodeInfo.getText().toString();
                     Log.i("----", "text == " + text);
@@ -108,16 +109,4 @@ public class AccessibilityManager {
         return map;
     }
 
-    public static List<Map<String, Object>> getNodeItems() {
-        List<Map<String, Object>> list = new ArrayList<>();
-        for (int i = 0; i < MyAccessibilityService.getList().size(); i++) {
-            list.add(getNodeItem(MyAccessibilityService.getList().get(i)));
-            Log.i("----", " == " + getNodeItem(MyAccessibilityService.getList().get(i)).toString());
-        }
-        return list;
-    }
-
-    public static void clear() {
-        mList.clear();
-    }
 }

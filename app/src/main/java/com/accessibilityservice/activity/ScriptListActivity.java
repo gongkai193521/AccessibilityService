@@ -2,11 +2,14 @@ package com.accessibilityservice.activity;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
+import com.accessibilityservice.MainApplication;
 import com.accessibilityservice.R;
 import com.accessibilityservice.adapter.JsAdapter;
+import com.accessibilityservice.manager.TaskManager;
 import com.accessibilityservice.model.AppModel;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
@@ -14,6 +17,8 @@ import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.FindCallback;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +31,7 @@ public class ScriptListActivity extends BaseActivity {
     private ArrayList<AppModel> list;
     private SweetAlertDialog progressDialog;
     private ListView lv_list;
+    private RefreshLayout rlRefresh;
 
     private void showLoading(String str, String str2) {
         this.progressDialog.setTitle(str);
@@ -49,6 +55,12 @@ public class ScriptListActivity extends BaseActivity {
         this.progressDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
         this.progressDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
         lv_list = findViewById(R.id.lv_list);
+        this.rlRefresh = findViewById(R.id.rl_refresh);
+        this.rlRefresh.setOnRefreshListener(new OnRefreshListener() {
+            public void onRefresh(RefreshLayout refreshLayout) {
+                getPlatformList();
+            }
+        });
         this.jsAdapter = new JsAdapter(mContext);
         lv_list.setAdapter(jsAdapter);
         getPlatformList();
@@ -68,7 +80,7 @@ public class ScriptListActivity extends BaseActivity {
     }
 
 
-    public void refresh(View view) {
+    public void onRefresh(View view) {
         getPlatformList();
     }
 
@@ -80,6 +92,7 @@ public class ScriptListActivity extends BaseActivity {
             public void done(List<AVObject> resList, AVException e) {
                 list = new ArrayList<>();
                 hideLoading();
+                rlRefresh.finishRefresh();
                 for (AVObject mAVObject : resList) {
                     AppModel appModel = new AppModel();
                     String strJson = mAVObject.getString("data");
@@ -92,6 +105,7 @@ public class ScriptListActivity extends BaseActivity {
                     appModel.setAppName(mAVObject.getString("platform_name"));
                     list.add(appModel);
                 }
+
                 jsAdapter.setList(list);
             }
         });
@@ -108,8 +122,27 @@ public class ScriptListActivity extends BaseActivity {
     }
 
     public void reverseSelectAll(View view) {
+        execute();
     }
 
     public void selectAll(View view) {
+        execute();
+    }
+
+    private void execute() {
+        if (list == null || list.size() == 0) {
+            Toasty.error(mContext, "脚本列表为空").show();
+            return;
+        }
+        Toasty.success(mContext, "开始顺序执行脚本").show();
+        for (final AppModel models : list) {
+            Log.i("----", " models== " +models );
+            MainApplication.getExecutorService().execute(new Runnable() {
+                @Override
+                public void run() {
+                    TaskManager.getInstance().task(models);
+                }
+            });
+        }
     }
 }

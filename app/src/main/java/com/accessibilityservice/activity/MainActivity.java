@@ -20,7 +20,6 @@ import com.accessibilityservice.BuildConfig;
 import com.accessibilityservice.MainApplication;
 import com.accessibilityservice.R;
 import com.accessibilityservice.manager.UserManager;
-import com.accessibilityservice.service.TaskService;
 import com.accessibilityservice.util.AppUtils;
 import com.accessibilityservice.util.DeviceIdUtils;
 import com.accessibilityservice.util.Shell;
