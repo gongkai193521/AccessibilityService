@@ -110,7 +110,7 @@ public class TaskManager {
         long planTime;
         int sleepTime;
         if (isDetails) {//详情页面
-            sleepTime = random.nextInt(2) + 4;
+            sleepTime = random.nextInt(2) + 3;
             planTime = model.getPlanTime();
         } else {//列表页面
             sleepTime = random.nextInt(2) + 2;
