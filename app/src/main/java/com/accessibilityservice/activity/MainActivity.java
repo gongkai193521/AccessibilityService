@@ -134,6 +134,10 @@ public class MainActivity extends BaseActivity {
             public void onItemClick(AdapterView adapterView, View view, int i, long j) {
                 switch (i) {
                     case 0:
+                        if (System.currentTimeMillis()>UserManager.getInstance().getLogin().expiry_date){
+                            Toasty.normal(mContext, "服务已到期,请续费!");
+                            return;
+                        }
                         if (!MainApplication.getUiManager().check()) {
                             Toasty.normal(mContext, "请找到 “辅助” 开启辅助功能服务");
                             return;
