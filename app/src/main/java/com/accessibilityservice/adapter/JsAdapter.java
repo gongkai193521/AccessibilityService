@@ -23,36 +23,49 @@ public class JsAdapter extends BaseListAdapter<AppModel> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        JsHolder mJsHolder=null;
         if (convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.js_item, null);
-            TextView tv_app = convertView.findViewById(R.id.tv_name);
-            ImageView iv_app = convertView.findViewById(R.id.iv_icon);
-            Button btn_run = convertView.findViewById(R.id.btn_run);
-            Button btn_stop = convertView.findViewById(R.id.btn_stop);
-            final AppModel models = mList.get(position);
-            tv_app.setText(models.getAppName());
-            Glide.with(parent).load(models.getAppIcon()).into(iv_app);
-            btn_run.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Toasty.success(mContext, "开始执行" + models.getAppName() + "脚本").show();
-                    MainApplication.getExecutorService().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            TaskManager.getInstance().task(models);
-                        }
-                    });
-                }
-            });
-            btn_stop.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    TaskManager.isStop = true;
-                    Toasty.success(mContext, "已停止" + models.getAppName() + "脚本").show();
-                }
-            });
+            mJsHolder=new JsHolder();
+            mJsHolder.tv_app = convertView.findViewById(R.id.tv_name);
+            mJsHolder.iv_app = convertView.findViewById(R.id.iv_icon);
+            mJsHolder.btn_run = convertView.findViewById(R.id.btn_run);
+            mJsHolder.btn_stop = convertView.findViewById(R.id.btn_stop);
+            convertView.setTag(mJsHolder);
+        }else{
+            mJsHolder=(JsHolder)convertView.getTag();
         }
+        final AppModel models = mList.get(position);
+        mJsHolder.tv_app.setText(models.getAppName());
+        Glide.with(parent).load(models.getAppIcon()).into(mJsHolder.iv_app);
+        mJsHolder.btn_run.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toasty.success(mContext, "开始执行" + models.getAppName() + "脚本").show();
+                MainApplication.getExecutorService().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        TaskManager.getInstance().task(models);
+                    }
+                });
+            }
+        });
+        mJsHolder.btn_stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TaskManager.isStop = true;
+                Toasty.success(mContext, "已停止" + models.getAppName() + "脚本").show();
+            }
+        });
+
         return convertView;
+    }
+
+    public class JsHolder{
+        TextView tv_app;
+        ImageView iv_app;
+        Button btn_run;
+        Button btn_stop;
     }
 
 }
