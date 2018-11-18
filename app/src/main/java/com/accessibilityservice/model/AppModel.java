@@ -7,6 +7,7 @@ import java.util.List;
  */
 
 public class AppModel {
+    public boolean isInstall;
     private String appPackage;
     private String appName;
     private String appIcon;

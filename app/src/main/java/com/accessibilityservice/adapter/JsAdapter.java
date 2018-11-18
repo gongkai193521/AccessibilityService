@@ -12,6 +12,7 @@ import com.accessibilityservice.MainApplication;
 import com.accessibilityservice.R;
 import com.accessibilityservice.manager.TaskManager;
 import com.accessibilityservice.model.AppModel;
+import com.accessibilityservice.util.AppUtils;
 import com.bumptech.glide.Glide;
 
 import es.dmoral.toasty.Toasty;
@@ -20,6 +21,8 @@ public class JsAdapter extends BaseListAdapter<AppModel> {
     public JsAdapter(Context context) {
         super(context);
     }
+
+
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -38,9 +41,19 @@ public class JsAdapter extends BaseListAdapter<AppModel> {
         final AppModel models = mList.get(position);
         mJsHolder.tv_app.setText(models.getAppName());
         Glide.with(parent).load(models.getAppIcon()).into(mJsHolder.iv_app);
+        models.isInstall=AppUtils.checkApkExist(mContext,models.getAppPackage());
+        if (models.isInstall){
+            mJsHolder.btn_run.setText("运行");
+        }else{
+            mJsHolder.btn_run.setText("安装");
+        }
         mJsHolder.btn_run.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (!models.isInstall){
+                    AppUtils.launchAppDetail(mContext,models.getAppPackage(),"");
+                    return;
+                }
                 Toasty.success(mContext, "开始执行" + models.getAppName() + "脚本").show();
                 MainApplication.getExecutorService().execute(new Runnable() {
                     @Override

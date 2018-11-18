@@ -112,6 +112,14 @@ public class ScriptListActivity extends BaseActivity {
         });
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (jsAdapter!=null){
+            jsAdapter.notifyDataSetChanged();
+        }
+    }
+
     private void hideLoading() {
         this.progressDialog.hide();
     }

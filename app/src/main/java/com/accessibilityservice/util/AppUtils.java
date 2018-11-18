@@ -2,8 +2,11 @@ package com.accessibilityservice.util;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.accessibilityservice.MainApplication;
@@ -110,4 +113,35 @@ public class AppUtils {
     public static String getTopCls() {
         return getTopActivity().getClsName();
     }
+
+    public static boolean checkApkExist(Context context, String packageName) {
+        if (TextUtils.isEmpty(packageName))
+            return false;
+        try {
+            ApplicationInfo info = context.getPackageManager()
+                    .getApplicationInfo(packageName, PackageManager.GET_UNINSTALLED_PACKAGES);
+
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+
+    }
+
+    public static void launchAppDetail(Context context, String appPkg, String marketPkg) {
+try {
+if (TextUtils.isEmpty(appPkg))
+return;
+Uri uri = Uri.parse("market://details?id=" + appPkg);
+Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+ //如果设置了market包名 打开指定app市场
+if (!TextUtils.isEmpty(marketPkg))
+intent.setPackage(marketPkg);
+intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+context.startActivity(intent);
+} catch (Exception e) {
+ e.printStackTrace();
+}
+}
+
 }
