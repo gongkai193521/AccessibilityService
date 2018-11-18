@@ -8,6 +8,7 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import com.accessibilityservice.manager.TaskManager;
+import com.accessibilityservice.manager.AccessibilityManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,11 +100,6 @@ public class MyAccessibilityService extends AccessibilityService {
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent accessibilityEvent) {
-        int eventType = accessibilityEvent.getEventType();
-        switch (eventType) {
-            case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
-                break;
-        }
     }
 
     public void onCreate() {
@@ -136,6 +132,7 @@ public class MyAccessibilityService extends AccessibilityService {
                 Log.i("----", "KEYCODE_VOLUME_DOWN");
                 TaskManager.isStop = true;
                 TaskManager.isAllStop = true;
+                AccessibilityManager.sendMsg("已停止执行脚本");
                 break;
             case KeyEvent.KEYCODE_VOLUME_UP:
                 Log.i("----", "KEYCODE_VOLUME_UP");
