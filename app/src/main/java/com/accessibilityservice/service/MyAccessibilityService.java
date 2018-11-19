@@ -8,7 +8,7 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import com.accessibilityservice.manager.TaskManager;
-import com.accessibilityservice.manager.AccessibilityManager;
+import com.accessibilityservice.util.GsonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -130,9 +130,7 @@ public class MyAccessibilityService extends AccessibilityService {
         switch (key) {
             case KeyEvent.KEYCODE_VOLUME_DOWN:
                 Log.i("----", "KEYCODE_VOLUME_DOWN");
-                TaskManager.isStop = true;
-                TaskManager.isAllStop = true;
-                AccessibilityManager.sendMsg("已停止执行脚本");
+                TaskManager.getInstance().stop();
                 break;
             case KeyEvent.KEYCODE_VOLUME_UP:
                 Log.i("----", "KEYCODE_VOLUME_UP");

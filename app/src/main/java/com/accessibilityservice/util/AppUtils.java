@@ -129,19 +129,19 @@ public class AppUtils {
     }
 
     public static void launchAppDetail(Context context, String appPkg, String marketPkg) {
-try {
-if (TextUtils.isEmpty(appPkg))
-return;
-Uri uri = Uri.parse("market://details?id=" + appPkg);
-Intent intent = new Intent(Intent.ACTION_VIEW, uri);
- //如果设置了market包名 打开指定app市场
-if (!TextUtils.isEmpty(marketPkg))
-intent.setPackage(marketPkg);
-intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-context.startActivity(intent);
-} catch (Exception e) {
- e.printStackTrace();
-}
-}
+        try {
+            if (TextUtils.isEmpty(appPkg))
+                return;
+            Uri uri = Uri.parse("market://details?id=" + appPkg);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            //如果设置了market包名 打开指定app市场
+            if (!TextUtils.isEmpty(marketPkg))
+                intent.setPackage(marketPkg);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }

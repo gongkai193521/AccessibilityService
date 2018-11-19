@@ -15,64 +15,60 @@ import com.accessibilityservice.model.AppModel;
 import com.accessibilityservice.util.AppUtils;
 import com.bumptech.glide.Glide;
 
-import es.dmoral.toasty.Toasty;
-
 public class JsAdapter extends BaseListAdapter<AppModel> {
     public JsAdapter(Context context) {
         super(context);
     }
 
 
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        JsHolder mJsHolder=null;
+        JsHolder mJsHolder = null;
         if (convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.js_item, null);
-            mJsHolder=new JsHolder();
+            mJsHolder = new JsHolder();
             mJsHolder.tv_app = convertView.findViewById(R.id.tv_name);
             mJsHolder.iv_app = convertView.findViewById(R.id.iv_icon);
             mJsHolder.btn_run = convertView.findViewById(R.id.btn_run);
             mJsHolder.btn_stop = convertView.findViewById(R.id.btn_stop);
             mJsHolder.tv_status = convertView.findViewById(R.id.tv_status);
             convertView.setTag(mJsHolder);
-        }else{
-            mJsHolder=(JsHolder)convertView.getTag();
+        } else {
+            mJsHolder = (JsHolder) convertView.getTag();
         }
         final AppModel models = mList.get(position);
-        if (models.isChoose){
+        if (models.isChoose) {
             mJsHolder.tv_status.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             mJsHolder.tv_status.setVisibility(View.INVISIBLE);
         }
-        final View temp=mJsHolder.tv_status;
+        final View temp = mJsHolder.tv_status;
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                models.isChoose=!models.isChoose;
-                if (models.isChoose){
+                models.isChoose = !models.isChoose;
+                if (models.isChoose) {
                     temp.setVisibility(View.VISIBLE);
-                }else{
+                } else {
                     temp.setVisibility(View.INVISIBLE);
                 }
             }
         });
         mJsHolder.tv_app.setText(models.getAppName());
         Glide.with(parent).load(models.getAppIcon()).into(mJsHolder.iv_app);
-        models.isInstall=AppUtils.checkApkExist(mContext,models.getAppPackage());
-        if (models.isInstall){
+        models.isInstall = AppUtils.checkApkExist(mContext, models.getAppPackage());
+        if (models.isInstall) {
             mJsHolder.btn_run.setText("运行");
-        }else{
+        } else {
             mJsHolder.btn_run.setText("安装");
         }
         mJsHolder.btn_run.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!models.isInstall){
-                    AppUtils.launchAppDetail(mContext,models.getAppPackage(),"");
+                if (!models.isInstall) {
+                    AppUtils.launchAppDetail(mContext, models.getAppPackage(), "");
                     return;
                 }
-                Toasty.success(mContext, "开始执行" + models.getAppName() + "脚本").show();
                 MainApplication.getExecutorService().execute(new Runnable() {
                     @Override
                     public void run() {
@@ -84,15 +80,14 @@ public class JsAdapter extends BaseListAdapter<AppModel> {
         mJsHolder.btn_stop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                TaskManager.isStop = true;
-                Toasty.success(mContext, "已停止" + models.getAppName() + "脚本").show();
+                TaskManager.getInstance().stop();
             }
         });
 
         return convertView;
     }
 
-    public class JsHolder{
+    public class JsHolder {
         TextView tv_app;
         ImageView iv_app;
         Button btn_run;

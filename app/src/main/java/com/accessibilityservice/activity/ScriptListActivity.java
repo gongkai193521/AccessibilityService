@@ -50,7 +50,7 @@ public class ScriptListActivity extends BaseActivity {
         initView();
     }
 
-    private Button btn_reverse_select_all,btn_select_all;
+    private Button btn_reverse_select_all, btn_select_all;
 
     private void initView() {
         setTitle("已购脚本");
@@ -120,7 +120,7 @@ public class ScriptListActivity extends BaseActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        if (jsAdapter!=null){
+        if (jsAdapter != null) {
             jsAdapter.notifyDataSetChanged();
         }
     }
@@ -136,21 +136,21 @@ public class ScriptListActivity extends BaseActivity {
     }
 
     public void reverseSelectAll(View view) {
-        if (list==null||list.size()==0){
+        if (list == null || list.size() == 0) {
             return;
         }
-        for(AppModel mAppModel:list){
-            mAppModel.isChoose=!mAppModel.isChoose;
+        for (AppModel mAppModel : list) {
+            mAppModel.isChoose = !mAppModel.isChoose;
         }
         jsAdapter.notifyDataSetChanged();
     }
 
     public void selectAll(View view) {
-        if (list==null||list.size()==0){
+        if (list == null || list.size() == 0) {
             return;
         }
-        for(AppModel mAppModel:list){
-            mAppModel.isChoose=true;
+        for (AppModel mAppModel : list) {
+            mAppModel.isChoose = true;
         }
         jsAdapter.notifyDataSetChanged();
     }

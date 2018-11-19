@@ -20,20 +20,38 @@ import static com.accessibilityservice.MainApplication.mHandler;
  */
 
 public class AccessibilityManager {
-    private static List<String> mList = new ArrayList<>();
+    private volatile static AccessibilityManager instance = null;
+    private static List<String> textList;
+
+    AccessibilityManager() {
+        if (textList == null) {
+            textList = new ArrayList<>();
+        }
+    }
+
+    public static AccessibilityManager getInstance() {
+        if (instance == null) {
+            synchronized (AccessibilityManager.class) {
+                if (instance == null) {
+                    instance = new AccessibilityManager();
+                }
+            }
+        }
+        return instance;
+    }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    public static boolean clickByViewIdForList(String viewId) {
+    public boolean clickByViewIdForList(String viewId) {
         for (AccessibilityNodeInfo nodeInfo : MyAccessibilityService.getList()) {
             if (viewId.equals(nodeInfo.getViewIdResourceName())) {
                 Rect rect2 = new Rect();
                 nodeInfo.getBoundsInScreen(rect2);
                 if (nodeInfo.getText() != null) {
                     final String text = nodeInfo.getText().toString();
-                    if (!mList.toArray().toString().contains(text)) {
+                    if (!textList.toArray().toString().contains(text)) {
                         Shell.execute("input tap " + rect2.left + " " + rect2.top);
                         Log.i("----", "text == " + text);
-                        mList.add(text);
+                        textList.add(text);
                         sendMsg("阅读" + text);
                         break;
                     }
@@ -55,8 +73,7 @@ public class AccessibilityManager {
                 Log.i("----", "点击viewId== " + viewId);
                 if (nodeInfo.getText() != null) {
                     String text = nodeInfo.getText().toString();
-                    Log.i("----", "text == " + text);
-                    sendMsg("点击" + text);
+                    Log.i("----", "点击 == " + text);
                 }
                 break;
             }
@@ -81,7 +98,6 @@ public class AccessibilityManager {
                 nodeInfo.getBoundsInScreen(rect2);
                 Shell.execute("input tap " + rect2.left + " " + rect2.top);
                 Log.i("----", "点击text== " + text);
-                sendMsg("点击" + text);
                 break;
             }
         }
@@ -92,5 +108,10 @@ public class AccessibilityManager {
         Message message = mHandler.obtainMessage();
         message.obj = msg;
         mHandler.sendMessage(message);
+    }
+
+    public void clear() {
+        textList.clear();
+        instance = null;
     }
 }
