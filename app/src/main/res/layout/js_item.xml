@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
+                android:descendantFocusability="blocksDescendants"
                 android:layout_height="wrap_content"
                 android:padding="10.0dip">
 
@@ -22,6 +23,7 @@
                 android:layout_marginLeft="5.0dip"/>
 
             <TextView
+                android:id="@+id/tv_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -34,7 +36,7 @@
                 android:text="已选择"
                 android:textColor="#ffffffff"
                 android:textSize="10.0dip"
-                android:visibility="gone"/>
+                android:visibility="visible"/>
         </RelativeLayout>
 
         <RelativeLayout

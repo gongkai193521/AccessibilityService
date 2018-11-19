@@ -3,6 +3,7 @@ package com.accessibilityservice.activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.accessibilityservice.MainApplication;
@@ -49,11 +50,15 @@ public class ScriptListActivity extends BaseActivity {
         initView();
     }
 
+    private Button btn_reverse_select_all,btn_select_all;
+
     private void initView() {
         setTitle("已购脚本");
         this.progressDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
         this.progressDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
         lv_list = findViewById(R.id.lv_list);
+        btn_select_all = findViewById(R.id.btn_select_all);
+        btn_reverse_select_all = findViewById(R.id.btn_reverse_select_all);
         this.rlRefresh = findViewById(R.id.rl_refresh);
         this.rlRefresh.setOnRefreshListener(new OnRefreshListener() {
             public void onRefresh(RefreshLayout refreshLayout) {
@@ -131,9 +136,23 @@ public class ScriptListActivity extends BaseActivity {
     }
 
     public void reverseSelectAll(View view) {
+        if (list==null||list.size()==0){
+            return;
+        }
+        for(AppModel mAppModel:list){
+            mAppModel.isChoose=!mAppModel.isChoose;
+        }
+        jsAdapter.notifyDataSetChanged();
     }
 
     public void selectAll(View view) {
+        if (list==null||list.size()==0){
+            return;
+        }
+        for(AppModel mAppModel:list){
+            mAppModel.isChoose=true;
+        }
+        jsAdapter.notifyDataSetChanged();
     }
 
     private void execute() {
@@ -145,7 +164,9 @@ public class ScriptListActivity extends BaseActivity {
             @Override
             public void run() {
                 for (AppModel models : list) {
-                    TaskManager.getInstance().task(models);
+                    if (models.isChoose) {
+                        TaskManager.getInstance().task(models);
+                    }
                 }
             }
         });

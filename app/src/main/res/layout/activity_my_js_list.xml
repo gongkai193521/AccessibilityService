@@ -142,7 +142,7 @@
                 android:text="全选"
                 android:textColor="#ffffffff"
                 android:textSize="13.0dip"
-                android:visibility="gone"/>
+                android:visibility="visible"/>
 
             <Button
                 android:id="@+id/btn_reverse_select_all"
@@ -154,7 +154,7 @@
                 android:text="反选"
                 android:textColor="#ffffffff"
                 android:textSize="13.0dip"
-                android:visibility="gone"/>
+                android:visibility="visible"/>
 
             <Button
                 android:id="@+id/btn_normal_runs"

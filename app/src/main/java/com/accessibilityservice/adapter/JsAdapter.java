@@ -34,11 +34,29 @@ public class JsAdapter extends BaseListAdapter<AppModel> {
             mJsHolder.iv_app = convertView.findViewById(R.id.iv_icon);
             mJsHolder.btn_run = convertView.findViewById(R.id.btn_run);
             mJsHolder.btn_stop = convertView.findViewById(R.id.btn_stop);
+            mJsHolder.tv_status = convertView.findViewById(R.id.tv_status);
             convertView.setTag(mJsHolder);
         }else{
             mJsHolder=(JsHolder)convertView.getTag();
         }
         final AppModel models = mList.get(position);
+        if (models.isChoose){
+            mJsHolder.tv_status.setVisibility(View.VISIBLE);
+        }else{
+            mJsHolder.tv_status.setVisibility(View.INVISIBLE);
+        }
+        final View temp=mJsHolder.tv_status;
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                models.isChoose=!models.isChoose;
+                if (models.isChoose){
+                    temp.setVisibility(View.VISIBLE);
+                }else{
+                    temp.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
         mJsHolder.tv_app.setText(models.getAppName());
         Glide.with(parent).load(models.getAppIcon()).into(mJsHolder.iv_app);
         models.isInstall=AppUtils.checkApkExist(mContext,models.getAppPackage());
@@ -79,6 +97,7 @@ public class JsAdapter extends BaseListAdapter<AppModel> {
         ImageView iv_app;
         Button btn_run;
         Button btn_stop;
+        TextView tv_status;
     }
 
 }
