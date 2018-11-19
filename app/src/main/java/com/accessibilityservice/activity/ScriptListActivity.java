@@ -91,7 +91,7 @@ public class ScriptListActivity extends BaseActivity {
     }
 
     public void getPlatformList() {
-        showLoading("正在加载脚本列表..", "请耐心等待..");
+        showLoading("正在加载脚本列表...", "预计3 ~ 5秒完成, 请耐心等待..");
         AVQuery<AVObject> mQuery = new AVQuery<>("News_Platform");
         mQuery.findInBackground(new FindCallback<AVObject>() {
             @Override
@@ -160,6 +160,7 @@ public class ScriptListActivity extends BaseActivity {
             Toasty.error(mContext, "脚本列表为空").show();
             return;
         }
+        TaskManager.getInstance().setStop(false);
         MainApplication.getExecutorService().execute(new Runnable() {
             @Override
             public void run() {

@@ -92,13 +92,21 @@ public class AccessibilityManager {
         for (AccessibilityNodeInfo nodeInfo : MyAccessibilityService.getList()) {
             CharSequence text1 = nodeInfo.getText();
             CharSequence description = nodeInfo.getContentDescription();
-            if ((text1 != null && text1.toString().contains(text))
-                    || (description != null && description.toString().contains(text))) {
-                Rect rect2 = new Rect();
-                nodeInfo.getBoundsInScreen(rect2);
-                Shell.execute("input tap " + rect2.left + " " + rect2.top);
-                Log.i("----", "点击text== " + text);
-                break;
+            String[] strings;
+            if (text.contains(",")) {
+                strings = text.split(",");
+            } else {
+                strings = new String[]{text};
+            }
+            for (String s : strings) {
+                if ((text1 != null && text1.toString().contains(s))
+                        || (description != null && description.toString().contains(s))) {
+                    Rect rect2 = new Rect();
+                    nodeInfo.getBoundsInScreen(rect2);
+                    Shell.execute("input tap " + rect2.left + " " + rect2.top);
+                    Log.i("----", "点击text== " + s);
+                    break;
+                }
             }
         }
         return false;

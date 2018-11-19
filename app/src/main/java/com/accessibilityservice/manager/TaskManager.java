@@ -21,9 +21,9 @@ import java.util.Random;
 
 public class TaskManager {
     private volatile static TaskManager instance = null;
-    private static boolean isStop = false;//停止
-    private static long runStartTime;
-    private static AppModel appModel;
+    private static boolean isStop = false;//停止脚本
+    private long runStartTime;
+    private AppModel appModel;
     private List<String> clsList;
 
     private TaskManager() {
@@ -55,6 +55,9 @@ public class TaskManager {
 
     //初始化执行任务
     public void task(AppModel appModel) {
+        if (isStop) {
+            return;
+        }
         if (!AppUtils.isApplicationAvilible(appModel.getAppPackage())) {
             AccessibilityManager.sendMsg("请先安装" + appModel.getAppName());
             return;
@@ -67,7 +70,6 @@ public class TaskManager {
             clsList.add(model.getClassName());
         }
         this.appModel = appModel;
-        isStop = false;
         doTask(appModel);
     }
 
@@ -95,6 +97,7 @@ public class TaskManager {
                 return;
             }
             if (model.getClassName().equals(topCls)) {
+                if (isStop()) break;
                 Log.i("----", " getType== " + model.getType());
                 if ("0".equals(model.getType())) {
                     for (String viewId : model.getViews()) {
@@ -124,28 +127,31 @@ public class TaskManager {
     //上拉
     private void scrollDown(boolean isDetails, AppModel.AppPageModel model) {
         Random random = new Random();
-        int y = random.nextInt(50) + 100;
+        int y;
         long planTime;
         int sleepTime;
         if (isDetails) {//详情页面
             sleepTime = random.nextInt(2) + 3;
             planTime = model.getPlanTime();
+            y = random.nextInt(50) + 100;
         } else {//列表页面
             sleepTime = random.nextInt(2) + 2;
+            y = random.nextInt(50) + 150;
             planTime = (random.nextInt(6) + 3) * 1000;
         }
         long lasTime = System.currentTimeMillis();
         for (; ; ) {
-            if (isStop()) return;
+            if (isStop()) break;
             if (System.currentTimeMillis() - lasTime < planTime) {
                 try {
                     Thread.sleep(sleepTime * 1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                if (isStop()) break;
                 ActivityInfo topActivity = AppUtils.getTopActivity();
                 if (appModel.getAppPackage().equals(topActivity.getPkgName())) {
-                    Shell.execute("input swipe " + y + " 500 " + y + " " + y);
+                    Shell.execute("input swipe " + y + " 600 " + y + " " + y);
                     String topCls = topActivity.getClsName();
                     if (!clsList.contains(topCls)) {
                         Log.i("----", "无此页面--返回");
@@ -158,9 +164,7 @@ public class TaskManager {
                         for (String viewId : model.getViews()) {//点击阅读全文
                             AccessibilityManager.clickByViewId(viewId);
                         }
-                        AccessibilityManager.clickByText("查看全文");
-                        AccessibilityManager.clickByText("阅读全文");
-                        AccessibilityManager.clickByText("展开全文");
+                        AccessibilityManager.clickByText("查看全文,阅读全文,展开全文");
                     }
                 } else {
                     break;
@@ -178,8 +182,12 @@ public class TaskManager {
         Shell.execute("input swipe " + y + " " + y + " " + y + 400);
     }
 
+    public void setStop(boolean stop) {
+        isStop = stop;
+    }
+
     public void stop() {
-        isStop = true;
+        setStop(true);
         clsList.clear();
         AccessibilityManager.getInstance().clear();
         instance = null;

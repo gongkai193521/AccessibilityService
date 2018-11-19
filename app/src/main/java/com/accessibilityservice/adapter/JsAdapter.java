@@ -15,6 +15,8 @@ import com.accessibilityservice.model.AppModel;
 import com.accessibilityservice.util.AppUtils;
 import com.bumptech.glide.Glide;
 
+import es.dmoral.toasty.Toasty;
+
 public class JsAdapter extends BaseListAdapter<AppModel> {
     public JsAdapter(Context context) {
         super(context);
@@ -46,6 +48,10 @@ public class JsAdapter extends BaseListAdapter<AppModel> {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (!models.isInstall) {
+                    Toasty.error(mContext, "未安装，请先安装该应用再选择").show();
+                    return;
+                }
                 models.isChoose = !models.isChoose;
                 if (models.isChoose) {
                     temp.setVisibility(View.VISIBLE);
@@ -72,6 +78,7 @@ public class JsAdapter extends BaseListAdapter<AppModel> {
                 MainApplication.getExecutorService().execute(new Runnable() {
                     @Override
                     public void run() {
+                        TaskManager.getInstance().setStop(false);
                         TaskManager.getInstance().task(models);
                     }
                 });

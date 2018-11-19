@@ -34,7 +34,7 @@ public class AppUtils {
     public static void startAppByPkg(Context context, String packagename) {
         Intent intent = isInstall(packagename);
         if (intent == null) {
-            Toasty.error(context, "无法启动该应用，请检查应用是否安装").show();
+            Log.i("----", "无法启动该应用，请检查应用是否安装");
         }
         try {
             intent.addCategory(Intent.CATEGORY_LAUNCHER);
