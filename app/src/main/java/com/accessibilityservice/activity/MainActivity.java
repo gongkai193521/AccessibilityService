@@ -228,6 +228,7 @@ public class MainActivity extends BaseActivity {
     protected void onDestroy() {
         release();
         super.onDestroy();
+        AppUtils.setLauncherEnabled(MainActivity.this,false);
     }
 
     public void onLogoff(View view) {
@@ -241,6 +242,7 @@ public class MainActivity extends BaseActivity {
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.hide();
                         MainActivity.this.logoff();
+                        AppUtils.setLauncherEnabled(MainActivity.this,false);
                     }
                 }).show();
     }

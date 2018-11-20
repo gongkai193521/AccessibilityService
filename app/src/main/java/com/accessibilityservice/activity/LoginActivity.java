@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.accessibilityservice.R;
 import com.accessibilityservice.manager.UserManager;
 import com.accessibilityservice.model.Client_User;
+import com.accessibilityservice.util.AppUtils;
 import com.accessibilityservice.util.DeviceIdUtils;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVOSCloud;
@@ -73,6 +74,7 @@ public class LoginActivity extends BaseActivity {
 
     private void initView() {
         if (UserManager.getInstance().isLogin()) {
+            AppUtils.setLauncherEnabled(this,true);
             startActivity(new Intent(mContext, MainActivity.class));
             finish();
             return;
@@ -159,6 +161,7 @@ public class LoginActivity extends BaseActivity {
     private void loginSuccess(Client_User mmClient_User) {
         UserManager.getInstance().saveLogin(mmClient_User);
         Toasty.success(this, "登录成功", 0, true).show();
+        AppUtils.setLauncherEnabled(this,true);
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }

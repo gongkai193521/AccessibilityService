@@ -1,5 +1,6 @@
 package com.accessibilityservice.util;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -10,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.accessibilityservice.MainApplication;
+import com.accessibilityservice.activity.MainActivity;
 import com.accessibilityservice.model.ActivityInfo;
 
 import java.util.List;
@@ -141,6 +143,17 @@ public class AppUtils {
             context.startActivity(intent);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void setLauncherEnabled(Context context, boolean isEnable) {
+        PackageManager var3 = MainApplication.getPkgManager();
+        ComponentName var4 = new ComponentName(context, MainActivity.class);
+        int var = isEnable ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED : PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+        try {
+            var3.setComponentEnabledSetting(var4, var, PackageManager.DONT_KILL_APP);
+        } catch (Exception var6) {
+            var6.printStackTrace();
         }
     }
 
