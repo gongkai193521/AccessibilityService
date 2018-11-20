@@ -48,7 +48,8 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activity.MainActivity"
+        <activity
+            android:name=".activity.MainActivity"
             android:enabled="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -58,7 +59,9 @@
                 <category android:name="android.intent.category.MONKEY"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activity.ScriptListActivity"/>
+        <activity
+            android:name=".activity.ScriptListActivity"
+            android:launchMode="singleTop"/>
 
         <service
             android:name=".service.MyAccessibilityService"

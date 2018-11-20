@@ -25,6 +25,7 @@ public class TaskManager {
     private long runStartTime;
     private AppModel appModel;
     private List<String> clsList;
+    private String homeCls;
 
     private TaskManager() {
         if (clsList == null) {
@@ -68,6 +69,9 @@ public class TaskManager {
         runStartTime = System.currentTimeMillis();
         for (AppModel.AppPageModel model : appModel.getPages()) {
             clsList.add(model.getClassName());
+            if (model.getType().equals("1")) {
+                homeCls = model.getClassName();
+            }
         }
         this.appModel = appModel;
         doTask(appModel);
@@ -77,10 +81,11 @@ public class TaskManager {
     public void doTask(AppModel appModel) {
         if (isStop()) return;
         if (!appModel.getAppPackage().equals(AppUtils.getTopActivity().getPkgName())) {
-            AppUtils.startAppByPkg(MainApplication.getContext(), appModel.getAppPackage());
+//            AppUtils.startAppByPkg(MainApplication.getContext(), appModel.getAppPackage());
+            Shell.exec("am start -n " + appModel.getAppPackage() + "/" + homeCls);
             Log.i("----", "打开== " + appModel.getAppName());
             try {
-                Thread.sleep(2000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -114,7 +119,9 @@ public class TaskManager {
                     MyAccessibilityService.back();
                 }
             } else if (!clsList.contains(topCls)) {
-                AccessibilityManager.sendMsg("跳过广告视屏页面");
+                if (topCls.contains("Video")) {
+                    AccessibilityManager.sendMsg("跳过广告视屏页面");
+                }
                 Log.i("----", "没有该页面--返回");
                 MyAccessibilityService.back();
             }
@@ -125,16 +132,14 @@ public class TaskManager {
     //上拉
     private void scrollDown(boolean isDetails, AppModel.AppPageModel model) {
         Random random = new Random();
-        int y;
+        int y = random.nextInt(50) + 150;
         long planTime;
         int sleepTime;
         if (isDetails) {//详情页面
             sleepTime = random.nextInt(2) + 3;
             planTime = model.getPlanTime();
-            y = random.nextInt(50) + 100;
         } else {//列表页面
             sleepTime = random.nextInt(2) + 2;
-            y = random.nextInt(50) + 150;
             planTime = (random.nextInt(6) + 3) * 1000;
         }
         long lasTime = System.currentTimeMillis();
