@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">辅助</string>
+    <string name="app_name">茄子辅助</string>
 
     <!-- Strings related to login -->
     <string name="login_hint">请输入登录账号</string>

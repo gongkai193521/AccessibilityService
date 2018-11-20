@@ -47,7 +47,7 @@ public class TaskManager {
     private boolean isStop() {
         if (isStop || System.currentTimeMillis() - runStartTime >= appModel.getPlanTime()) {
             Shell.exec("am force-stop " + appModel.getAppPackage(), true);
-            Shell.exec("am start -n " + MainApplication.getContext().getPackageName() + "/com.accessibilityservice.activity.LoginActivity");
+            Shell.exec("am start -n " + MainApplication.getContext().getPackageName() + "/com.accessibilityservice.activity.ScriptListActivity");
             return true;
         }
         return false;
@@ -114,9 +114,7 @@ public class TaskManager {
                     MyAccessibilityService.back();
                 }
             } else if (!clsList.contains(topCls)) {
-                if (topCls.contains("Video")) {
-                    AccessibilityManager.sendMsg("跳过视屏");
-                }
+                AccessibilityManager.sendMsg("跳过广告视屏页面");
                 Log.i("----", "没有该页面--返回");
                 MyAccessibilityService.back();
             }
