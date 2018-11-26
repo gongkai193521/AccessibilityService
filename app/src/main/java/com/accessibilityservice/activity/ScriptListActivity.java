@@ -96,6 +96,10 @@ public class ScriptListActivity extends BaseActivity {
         mQuery.findInBackground(new FindCallback<AVObject>() {
             @Override
             public void done(List<AVObject> resList, AVException e) {
+                if (resList == null) {
+                    Toasty.info(mContext, "数据列表为空，请检查数据网络");
+                    return;
+                }
                 list = new ArrayList<>();
                 hideLoading();
                 rlRefresh.finishRefresh();
