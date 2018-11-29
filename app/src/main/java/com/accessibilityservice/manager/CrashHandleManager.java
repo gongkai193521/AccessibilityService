@@ -1,9 +1,9 @@
-package com.viapalm.kidcares.child.managers;
+package com.accessibilityservice.manager;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 
-import com.viapalm.kidcares.base.utils.local.FileUtil;
+import com.accessibilityservice.util.FileUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -98,7 +98,7 @@ public class CrashHandleManager implements UncaughtExceptionHandler {
         sb.append(currentTime);
         sb.append(result);
         // 保存文件
-        String fileName = "CrashLog_child.txt";
+        String fileName = "CrashLog.txt";
         File file = FileUtil.getFileOrDir(FileUtil.LOG, fileName);
         if (file.length() > 1000000) {
             file.delete();
