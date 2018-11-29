@@ -42,22 +42,26 @@ public class AccessibilityManager {
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     public boolean clickByViewIdForList(String viewId) {
+        ArrayList<AccessibilityNodeInfo> nodeInfos = new ArrayList<>();
         for (AccessibilityNodeInfo nodeInfo : MyAccessibilityService.getList()) {
             if (viewId.equals(nodeInfo.getViewIdResourceName())) {
-                Rect rect2 = new Rect();
-                nodeInfo.getBoundsInScreen(rect2);
-                if (nodeInfo.getText() != null) {
-                    final String text = nodeInfo.getText().toString();
-                    if (!textList.toArray().toString().contains(text)) {
-                        Shell.execute("input tap " + rect2.left + " " + rect2.top);
-                        Log.i("----", "text == " + text);
-                        textList.add(text);
-                        sendMsg("阅读" + text);
-                        break;
-                    }
-                } else {
+                nodeInfos.add(nodeInfo);
+            }
+        }
+        if (nodeInfos.size() > 0) {
+            AccessibilityNodeInfo nodeInfo = nodeInfos.get(1);
+            Rect rect2 = new Rect();
+            nodeInfo.getBoundsInScreen(rect2);
+            if (nodeInfo.getText() != null) {
+                final String text = nodeInfo.getText().toString();
+                if (!textList.toArray().toString().contains(text)) {
                     Shell.execute("input tap " + rect2.left + " " + rect2.top);
+                    Log.i("----", "text == " + text);
+                    textList.add(text);
+                    sendMsg("阅读" + text);
                 }
+            } else {
+                Shell.execute("input tap " + rect2.left + " " + rect2.top);
             }
         }
         return false;
@@ -87,7 +91,7 @@ public class AccessibilityManager {
         return false;
     }
 
-    public static void clickBack(){
+    public static void clickBack() {
         Shell.execute("input keyevent 4");
     }
 
