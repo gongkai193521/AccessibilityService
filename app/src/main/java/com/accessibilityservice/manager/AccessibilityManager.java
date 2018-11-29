@@ -87,6 +87,10 @@ public class AccessibilityManager {
         return false;
     }
 
+    public static void clickBack(){
+        Shell.execute("input keyevent 4");
+    }
+
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     public static boolean clickByText(String text) {
         for (AccessibilityNodeInfo nodeInfo : MyAccessibilityService.getList()) {
