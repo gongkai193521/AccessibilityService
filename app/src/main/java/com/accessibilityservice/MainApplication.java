@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
+import com.accessibilityservice.manager.CrashHandleManager;
 import com.accessibilityservice.manager.UiManager;
 import com.avos.avoscloud.AVOSCloud;
 
@@ -38,6 +39,7 @@ public class MainApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        CrashHandleManager.getInstance().init(this);
         executorService = new ThreadPoolExecutor(5, Integer.MAX_VALUE, 0, TimeUnit.MILLISECONDS, new SynchronousQueue<Runnable>());
         mContext = this.getApplicationContext();
         uiManager = new UiManager(this);
