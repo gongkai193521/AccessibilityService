@@ -48,8 +48,13 @@ public class AccessibilityManager {
                 nodeInfos.add(nodeInfo);
             }
         }
-        if (nodeInfos.size() > 0) {
-            AccessibilityNodeInfo nodeInfo = nodeInfos.get(1);
+        AccessibilityNodeInfo nodeInfo = null;
+        if (nodeInfos.size() > 1) {
+            nodeInfo = nodeInfos.get(1);
+        } else if (nodeInfos.size() > 0) {
+            nodeInfo = nodeInfos.get(0);
+        }
+        if (nodeInfo != null) {
             Rect rect2 = new Rect();
             nodeInfo.getBoundsInScreen(rect2);
             if (nodeInfo.getText() != null) {
