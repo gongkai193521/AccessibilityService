@@ -79,7 +79,12 @@ public class JsAdapter extends BaseListAdapter<AppModel> {
                     @Override
                     public void run() {
                         TaskManager.getInstance().setStop(false);
-                        TaskManager.getInstance().task(models);
+                        for (; ; ) {
+                            if (TaskManager.getInstance().getStop()) {
+                                break;
+                            }
+                            TaskManager.getInstance().task(models);
+                        }
                     }
                 });
             }

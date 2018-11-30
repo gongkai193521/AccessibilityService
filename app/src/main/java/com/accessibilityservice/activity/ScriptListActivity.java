@@ -168,9 +168,17 @@ public class ScriptListActivity extends BaseActivity {
         MainApplication.getExecutorService().execute(new Runnable() {
             @Override
             public void run() {
-                for (AppModel models : list) {
-                    if (models.isChoose) {
-                        TaskManager.getInstance().task(models);
+                for (; ; ) {
+                    if (TaskManager.getInstance().getStop()) {
+                        break;
+                    }
+                    for (AppModel models : list) {
+                        if (TaskManager.getInstance().getStop()) {
+                            break;
+                        }
+                        if (models.isChoose) {
+                            TaskManager.getInstance().task(models);
+                        }
                     }
                 }
             }
