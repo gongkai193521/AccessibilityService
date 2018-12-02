@@ -25,13 +25,11 @@ public class TaskManager {
     private long runStartTime;
     private AppModel appModel;
     private List<String> clsList;
-    private List<String> viewIdList;
     private String homeCls;
 
     private TaskManager() {
         if (clsList == null) {
             clsList = new ArrayList<>();
-            viewIdList = new ArrayList<>();
         }
     }
 
@@ -73,8 +71,6 @@ public class TaskManager {
             clsList.add(model.getClassName());
             if (model.getType().equals("1")) {
                 homeCls = model.getClassName();
-            } else if (model.getType().equals("0")) {
-                viewIdList.addAll(model.getViews());
             }
         }
         this.appModel = appModel;
@@ -86,49 +82,19 @@ public class TaskManager {
         if (isStop()) return;
         if (!appModel.getAppPackage().equals(AppUtils.getTopActivity().getPkgName())) {
             Log.i("----", "打开== " + appModel.getAppName());
-//            AppUtils.startAppByPkg(MainApplication.getContext(), appModel.getAppPackage());
-            backHome();
+            AppUtils.startAppByPkg(MainApplication.getContext(), appModel.getAppPackage());
         }
         String topCls = AppUtils.getTopCls();
         if (!TextUtils.isEmpty(topCls)) {
-            boolean isHaved=false;
-            for (AppModel.AppPageModel model : appModel.getPages()){
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                if (model.getClassName().equals(topCls)){
-                    isHaved=true;
-                    if (isStop()) break;
-                    Log.i("----", " getType== " + model.getType());
-                    if ("0".equals(model.getType())) {
-                        AccessibilityManager.clickByText("跳过");
-                        for (String viewId : model.getViews()) {
-                            AccessibilityManager.clickByViewId(viewId);
-                        }
-                    } else if ("1".equals(model.getType())) {
-                        scrollDown(false, model);
-                        for (String viewId : model.getViews()) {
-                            AccessibilityManager.getInstance().clickByViewIdForList(viewId);
-                        }
-                    } else if ("2".equals(model.getType())) {
-                        scrollDown(true, model);
-                        backHome();
-                    }
-                }
-            }
-            if (!isHaved){
-                AccessibilityManager.clickBack();
-            }
-//
-//            for (AppModel.AppPageModel model : appModel.getPages()) {
+//            boolean isHaved = false;
+//            for (AppModel.AppPageModel model : appModel.getPages()){
 //                try {
 //                    Thread.sleep(500);
 //                } catch (InterruptedException e) {
 //                    e.printStackTrace();
 //                }
-//                if (model.getClassName().equals(topCls)) {
+//                if (model.getClassName().equals(topCls)){
+//                    isHaved=true;
 //                    if (isStop()) break;
 //                    Log.i("----", " getType== " + model.getType());
 //                    if ("0".equals(model.getType())) {
@@ -145,14 +111,43 @@ public class TaskManager {
 //                        scrollDown(true, model);
 //                        backHome();
 //                    }
-//                } else if (!clsList.contains(topCls)) {
-//                    if (topCls.contains("Video")) {
-//                        AccessibilityManager.sendMsg("跳过广告视屏页面");
-//                    }
-//                    Log.i("----", "没有该页面--回到主页");
-//                    backHome();
 //                }
 //            }
+//            if (!isHaved){
+//                AccessibilityManager.clickBack();
+//            }
+//
+            for (AppModel.AppPageModel model : appModel.getPages()) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (model.getClassName().equals(topCls)) {
+                    if (isStop()) break;
+                    Log.i("----", " getType== " + model.getType());
+                    if ("0".equals(model.getType())) {
+                        AccessibilityManager.clickByText("跳过");
+                        for (String viewId : model.getViews()) {
+                            AccessibilityManager.clickByViewId(viewId);
+                        }
+                    } else if ("1".equals(model.getType())) {
+                        scrollDown(false, model);
+                        for (String viewId : model.getViews()) {
+                            AccessibilityManager.getInstance().clickByViewIdForList(viewId);
+                        }
+                    } else if ("2".equals(model.getType())) {
+                        scrollDown(true, model);
+                        backHome();
+                    }
+                } else if (!clsList.contains(topCls)) {
+                    if (topCls.contains("Video")) {
+                        AccessibilityManager.sendMsg("跳过广告视屏页面");
+                    }
+                    Log.i("----", "没有该页面--回到主页");
+                    backHome();
+                }
+            }
         }
         doTask(appModel);
     }
@@ -174,9 +169,6 @@ public class TaskManager {
         for (; ; ) {
             if (isStop()) break;
             if (System.currentTimeMillis() - lasTime < planTime) {
-                for (String viewId : model.getViews()) {
-                    AccessibilityManager.clickByViewId(viewId);
-                }
                 if (isDetails) {
                     try {
                         Thread.sleep(2000);
@@ -187,10 +179,10 @@ public class TaskManager {
                 ActivityInfo topActivity = AppUtils.getTopActivity();
                 if (appModel.getAppPackage().equals(topActivity.getPkgName())) {
                     if (Build.VERSION.SDK_INT < 21 && isDetails) {
-                        if (topActivity.getPkgName().equals("cn.weli.story")||topActivity.getPkgName().equals("com.martian.hbnews")){
+                        if (topActivity.getPkgName().equals("cn.weli.story") || topActivity.getPkgName().equals("com.martian.hbnews")) {
                             Shell.execute("input swipe " + y + " 600 " + y + " " + y);
                             Shell.exec("input keyevent 20");
-                        }else {
+                        } else {
                             Shell.exec("input keyevent 20");
                             Shell.exec("input keyevent 20");
                             Shell.exec("input keyevent 20");
@@ -200,17 +192,16 @@ public class TaskManager {
                         Shell.execute("input swipe " + y + " 600 " + y + " " + y);
                     }
                     String topCls = topActivity.getClsName();
-//                    !clsList.contains(topCls) ||
-                    if (!model.getClassName().equals(topCls)) {
+                    if (!clsList.contains(topCls) || !model.getClassName().equals(topCls)) {
                         Log.i("----", "不是该页面--回到主页");
-//                        backHome();
-                        AccessibilityManager.clickBack();
+                        backHome();
+//                        AccessibilityManager.clickBack();
                         break;
                     } else if (isDetails) {
                         for (String viewId : model.getViews()) {//点击阅读全文
                             AccessibilityManager.clickByViewId(viewId);
                         }
-//                        AccessibilityManager.clickByText("查看全文,阅读全文,展开全文");
+                        AccessibilityManager.clickByText("查看全文,阅读全文,展开全文");
                     }
                 } else {
                     break;
@@ -241,10 +232,13 @@ public class TaskManager {
         isStop = stop;
     }
 
+    public boolean getStop() {
+        return isStop;
+    }
+
     public void stop() {
         setStop(true);
         clsList.clear();
-        viewIdList.clear();
         AccessibilityManager.getInstance().clear();
         instance = null;
         Log.i("----", " 停止执行== " + (appModel == null ? "" : appModel.getAppName()) + "脚本");
