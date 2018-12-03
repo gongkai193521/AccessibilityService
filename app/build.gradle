@@ -51,5 +51,10 @@ dependencies {
     compile 'com.scwang.smartrefresh:SmartRefreshLayout:latest.integration'
     compile project(':library')
     // LeanCloud 基础包
-    implementation('cn.leancloud.android:avoscloud-sdk:v4.7.3')
+
+    implementation ('cn.leancloud.android:avoscloud-sdk:v4.7.3')
+    implementation 'com.liulishuo.filedownloader:library:1.7.5'
+
+    implementation 'com.github.fingerth:FingerthAndroidUtils:1.0.3'
+
 }

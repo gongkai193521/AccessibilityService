@@ -107,6 +107,8 @@ public class ScriptListActivity extends BaseActivity {
                     String strJson = mAVObject.getString("data");
                     List<AppModel.AppPageModel> mAppPages = new Gson().fromJson(strJson, new TypeToken<List<AppModel.AppPageModel>>() {
                     }.getType());
+                    appModel.setmAVFile(mAVObject.getAVFile("apk"));
+                    appModel.setDownload_url(mAVObject.getString("download_url"));
                     appModel.setPages(mAppPages);
                     appModel.setPlanTime(mAVObject.getLong("platform_plan"));
                     appModel.setAppIcon(mAVObject.getString("platform_logo"));

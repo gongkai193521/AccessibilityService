@@ -1,6 +1,12 @@
 package com.accessibilityservice.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +20,12 @@ import com.accessibilityservice.manager.TaskManager;
 import com.accessibilityservice.model.AppModel;
 import com.accessibilityservice.util.AppUtils;
 import com.bumptech.glide.Glide;
+import com.fingerth.supdialogutils.SYSDiaLogUtils;
+import com.liulishuo.filedownloader.BaseDownloadTask;
+import com.liulishuo.filedownloader.FileDownloadListener;
+import com.liulishuo.filedownloader.FileDownloader;
+
+import java.io.File;
 
 import es.dmoral.toasty.Toasty;
 
@@ -72,7 +84,55 @@ public class JsAdapter extends BaseListAdapter<AppModel> {
             @Override
             public void onClick(View view) {
                 if (!models.isInstall) {
-                    AppUtils.launchAppDetail(mContext, models.getAppPackage(), "");
+                    if (models.getmAVFile()==null){
+                        Toasty.error(mContext, "下载地址为空").show();
+                        return;
+                    }
+                    File file =new File(Environment.getExternalStorageDirectory(),models.getmAVFile().getUrl().substring(models.getmAVFile().getUrl().lastIndexOf("/")+1));
+                    FileDownloader.getImpl().create(models.getmAVFile().getUrl())
+                            .setPath(file.getAbsolutePath())
+                            .setListener(new FileDownloadListener() {
+                                @Override
+                                protected void pending(BaseDownloadTask task, int soFarBytes, int totalBytes) {
+                                    Log.i("FileDownloader-pending","soFarBytes:"+soFarBytes+",totalBytes:"+totalBytes);
+                                    SYSDiaLogUtils.showProgressBar((Activity) mContext, SYSDiaLogUtils.SYSDiaLogType.RoundWidthNumberProgressBar, "下载中...");
+                                    SYSDiaLogUtils.setProgressBar(0);
+                                }
+
+                                @Override
+                                protected void progress(BaseDownloadTask task, int soFarBytes, int totalBytes) {
+                                    Log.i("FileDownloader-progress","soFarBytes:"+soFarBytes+",totalBytes:"+totalBytes);
+                                    SYSDiaLogUtils.setProgressBar((int) ((100F*soFarBytes)/totalBytes));
+                                }
+
+                                @Override
+                                protected void completed(BaseDownloadTask task) {
+                                    Log.i("FileDownloader-complete","completed");
+                                    SYSDiaLogUtils.dismissProgress();
+                                    Intent intent = new Intent();
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    intent.setAction(Intent.ACTION_VIEW);
+                                    Uri uri = Uri.fromFile(new File(task.getPath()));
+                                    intent.setDataAndType(uri, "application/vnd.android.package-archive");
+                                    mContext.startActivity(intent);
+                                }
+
+                                @Override
+                                protected void paused(BaseDownloadTask task, int soFarBytes, int totalBytes) {
+                                    Log.i("FileDownloader-paused","paused");
+                                }
+
+                                @Override
+                                protected void error(BaseDownloadTask task, Throwable e) {
+                                    Log.i("FileDownloader-error",e.getMessage());
+                                    SYSDiaLogUtils.dismissProgress();
+                                }
+
+                                @Override
+                                protected void warn(BaseDownloadTask task) {
+                                    Log.i("FileDownloader-warn","warn");
+                                }
+                            }).start();
                     return;
                 }
                 MainApplication.getExecutorService().execute(new Runnable() {

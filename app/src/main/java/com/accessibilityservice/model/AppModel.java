@@ -1,5 +1,7 @@
 package com.accessibilityservice.model;
 
+import com.avos.avoscloud.AVFile;
+
 import java.util.List;
 
 /**
@@ -7,9 +9,29 @@ import java.util.List;
  */
 
 public class AppModel {
+    private AVFile mAVFile;
+    private String download_url;
+
+    public AVFile getmAVFile() {
+        return mAVFile;
+    }
+
+    public void setmAVFile(AVFile mAVFile) {
+        this.mAVFile = mAVFile;
+    }
+
     public boolean isChoose;
     public boolean isInstall;
     private String appPackage;
+
+    public String getDownload_url() {
+        return download_url;
+    }
+
+    public void setDownload_url(String download_url) {
+        this.download_url = download_url;
+    }
+
     private String appName;
     private String appIcon;
     private Long planTime;//计划时间

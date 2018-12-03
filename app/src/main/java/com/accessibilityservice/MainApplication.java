@@ -10,6 +10,9 @@ import android.os.Message;
 import com.accessibilityservice.manager.CrashHandleManager;
 import com.accessibilityservice.manager.UiManager;
 import com.avos.avoscloud.AVOSCloud;
+import com.liulishuo.filedownloader.FileDownloader;
+import com.liulishuo.filedownloader.connection.FileDownloadUrlConnection;
+import com.liulishuo.filedownloader.util.FileDownloadLog;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;
@@ -39,6 +42,21 @@ public class MainApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        // just for open the log in this demo project.
+        FileDownloadLog.NEED_LOG = true;
+
+        /**
+         * just for cache Application's Context, and ':filedownloader' progress will NOT be launched
+         * by below code, so please do not worry about performance.
+         * @see FileDownloader#init(Context)
+         */
+        FileDownloader.setupOnApplicationOnCreate(this)
+                .connectionCreator(new FileDownloadUrlConnection
+                        .Creator(new FileDownloadUrlConnection.Configuration()
+                        .connectTimeout(15_000) // set connection timeout.
+                        .readTimeout(15_000) // set read timeout.
+                ))
+                .commit();
         CrashHandleManager.getInstance().init(this);
         executorService = new ThreadPoolExecutor(5, Integer.MAX_VALUE, 0, TimeUnit.MILLISECONDS, new SynchronousQueue<Runnable>());
         mContext = this.getApplicationContext();
