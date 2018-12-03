@@ -195,7 +195,7 @@ public class TaskManager {
                         Shell.execute("input swipe " + y + " 600 " + y + " " + y);
                     }
                     String topCls = topActivity.getClsName();
-                    if (!clsList.contains(topCls) || !model.getClassName().equals(topCls) || !isStop()) {
+                    if (!clsList.contains(topCls) || !model.getClassName().equals(topCls)) {
                         Log.i("----", "不是该页面--回到主页");
                         backHome();
                         break;
