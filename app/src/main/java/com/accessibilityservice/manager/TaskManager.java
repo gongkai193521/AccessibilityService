@@ -195,10 +195,9 @@ public class TaskManager {
                         Shell.execute("input swipe " + y + " 600 " + y + " " + y);
                     }
                     String topCls = topActivity.getClsName();
-                    if (!clsList.contains(topCls) || !model.getClassName().equals(topCls)) {
+                    if (!clsList.contains(topCls) || !model.getClassName().equals(topCls) || !isStop()) {
                         Log.i("----", "不是该页面--回到主页");
                         backHome();
-                        AccessibilityManager.clickBack();
                         break;
                     } else if (isDetails) {
                         for (String viewId : model.getViews()) {//点击阅读全文
