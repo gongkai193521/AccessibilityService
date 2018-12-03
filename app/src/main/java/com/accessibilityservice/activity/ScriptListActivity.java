@@ -22,7 +22,6 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -78,14 +77,11 @@ public class ScriptListActivity extends BaseActivity {
     }
 
     public void onNormalRuns(View view) {
-        Toasty.info(this, "开始顺序执行", 0, true).show();
-        execute();
+        execute(false);
     }
 
     public void onRandomRuns(View view) {
-        Toasty.info(this, "开始随机执行", 0, true).show();
-        Collections.shuffle(chooseList);
-        execute();
+        execute(true);
     }
 
 
@@ -118,7 +114,6 @@ public class ScriptListActivity extends BaseActivity {
                     appModel.setAppName(mAVObject.getString("platform_name"));
                     list.add(appModel);
                 }
-
                 jsAdapter.setList(list);
             }
         });
@@ -142,9 +137,6 @@ public class ScriptListActivity extends BaseActivity {
         }
     }
 
-    //已选择列表
-    private List<AppModel> chooseList = new ArrayList<>();
-
     public void reverseSelectAll(View view) {
         if (list == null || list.size() == 0) {
             return;
@@ -152,18 +144,12 @@ public class ScriptListActivity extends BaseActivity {
         for (AppModel mAppModel : list) {
             if (mAppModel.isInstall) {
                 mAppModel.isChoose = !mAppModel.isChoose;
-                Iterator<AppModel> iterator = chooseList.iterator();
-                while (iterator.hasNext()) {
-                    AppModel model = iterator.next();
-                    if (model.getAppPackage().equals(mAppModel.getAppPackage())) {
-                        iterator.remove();
-                    }
-                }
             }
         }
         jsAdapter.notifyDataSetChanged();
     }
 
+    //全选
     public void selectAll(View view) {
         if (list == null || list.size() == 0) {
             return;
@@ -171,16 +157,30 @@ public class ScriptListActivity extends BaseActivity {
         for (AppModel mAppModel : list) {
             if (mAppModel.isInstall) {
                 mAppModel.isChoose = true;
-                chooseList.add(mAppModel);
             }
         }
         jsAdapter.notifyDataSetChanged();
     }
 
-    private void execute() {
+    //已选择列表
+    private List<AppModel> chooseList = new ArrayList<>();
+
+    private void execute(boolean isRandom) {
+        chooseList.clear();
+        for (AppModel mAppModel : list) {
+            if (mAppModel.isInstall && mAppModel.isChoose) {
+                chooseList.add(mAppModel);
+            }
+        }
         if (chooseList.size() == 0) {
             Toasty.error(mContext, "请先选择要执行的脚本").show();
             return;
+        }
+        if (isRandom) {
+            Collections.shuffle(chooseList);
+            Toasty.info(mContext, "开始随机执行", 0, true).show();
+        } else {
+            Toasty.info(mContext, "开始顺序执行", 0, true).show();
         }
         TaskManager.getInstance().setStop(false);
         MainApplication.getExecutorService().execute(new Runnable() {
