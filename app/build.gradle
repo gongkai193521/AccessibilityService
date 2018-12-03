@@ -9,18 +9,29 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    signingConfigs {
+        release {
+            storeFile file('../kidcares.keystore')//签名文件路径，
+            //keystore的路径通常使用项目根目录的相对路径，但也可以是使用绝对路径，尽管这不推荐
+            storePassword 'KidCares2015' //密码
+            keyPassword 'KidCares2015'  //密码
+            keyAlias 'kidcares'
+        }
+    }
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
+            signingConfig signingConfigs.release
             debuggable true
         }
     }
 
     //为了解决部分第三方库重复打包了META-INF的问题
-    packagingOptions{
+    packagingOptions {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
     }
@@ -40,5 +51,5 @@ dependencies {
     compile 'com.scwang.smartrefresh:SmartRefreshLayout:latest.integration'
     compile project(':library')
     // LeanCloud 基础包
-    implementation ('cn.leancloud.android:avoscloud-sdk:v4.7.3')
+    implementation('cn.leancloud.android:avoscloud-sdk:v4.7.3')
 }

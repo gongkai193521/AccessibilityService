@@ -7,6 +7,7 @@ import android.util.Log;
 import com.accessibilityservice.MainApplication;
 import com.accessibilityservice.model.ActivityInfo;
 import com.accessibilityservice.model.AppModel;
+import com.accessibilityservice.service.MyAccessibilityService;
 import com.accessibilityservice.util.AppUtils;
 import com.accessibilityservice.util.GsonUtils;
 import com.accessibilityservice.util.Shell;
@@ -126,6 +127,7 @@ public class TaskManager {
                 if (model.getClassName().equals(topCls)) {
                     if (isStop()) break;
                     Log.i("----", " getType== " + model.getType());
+                    Log.i("----", " topCls== " + topCls);
                     if ("0".equals(model.getType())) {
                         AccessibilityManager.clickByText("跳过");
                         for (String viewId : model.getViews()) {
@@ -146,6 +148,7 @@ public class TaskManager {
                     }
                     Log.i("----", "没有该页面--回到主页");
                     backHome();
+                    break;
                 }
             }
         }
@@ -195,13 +198,15 @@ public class TaskManager {
                     if (!clsList.contains(topCls) || !model.getClassName().equals(topCls)) {
                         Log.i("----", "不是该页面--回到主页");
                         backHome();
-//                        AccessibilityManager.clickBack();
+                        AccessibilityManager.clickBack();
                         break;
                     } else if (isDetails) {
                         for (String viewId : model.getViews()) {//点击阅读全文
                             AccessibilityManager.clickByViewId(viewId);
                         }
-                        AccessibilityManager.clickByText("查看全文,阅读全文,展开全文");
+                        if (!"com.yanhui.qktx".equals(AppUtils.getTopPkg())) {
+                            AccessibilityManager.clickByText("查看全文,阅读全文,展开全文");
+                        }
                     }
                 } else {
                     break;
@@ -218,7 +223,12 @@ public class TaskManager {
     }
 
     private void backHome() {
-        Shell.exec("am start -n " + appModel.getAppPackage() + "/" + homeCls);
+        if ("cn.viaweb.toutiao".equals(AppUtils.getTopPkg())
+                || "com.sohu.infonews".equals(AppUtils.getTopPkg())) {
+            MyAccessibilityService.back();
+        } else {
+            Shell.exec("am start -n " + appModel.getAppPackage() + "/" + homeCls);
+        }
     }
 
     //下拉刷新
