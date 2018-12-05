@@ -8,7 +8,6 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import com.accessibilityservice.manager.TaskManager;
-import com.accessibilityservice.util.GsonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +40,7 @@ public class MyAccessibilityService extends AccessibilityService {
         if (accessibilityNodeInfo != null) {
             for (int i = 0; i < accessibilityNodeInfo.getChildCount(); i++) {
                 AccessibilityNodeInfo child = accessibilityNodeInfo.getChild(i);
-                if (child != null) {
+                if (child != null && child.isVisibleToUser()) {
                     list.add(child);
                     fullNodes(child, list);
                 }
