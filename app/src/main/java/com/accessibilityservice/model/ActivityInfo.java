@@ -19,4 +19,12 @@ public class ActivityInfo {
     public void setClsName(String clsName) {
         this.clsName = clsName;
     }
+
+    @Override
+    public String toString() {
+        return "ActivityInfo{" +
+                "pkgName='" + pkgName + '\'' +
+                ", clsName='" + clsName + '\'' +
+                '}';
+    }
 }

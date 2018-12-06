@@ -84,47 +84,48 @@ public class TaskManager {
             Log.i("----", "打开== " + appModel.getAppName());
             AppUtils.startAppByPkg(MainApplication.getContext(), appModel.getAppPackage());
         }
-        if (AppUtils.getTopActivity() != null) {
-            for (AppModel.AppPageModel model : appModel.getPages()) {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                if (model.getClassName().equals(AppUtils.getTopCls())) {
-                    if (isStop()) break;
-                    Log.i("----", " getType== " + model.getType());
-                    if ("0".equals(model.getType())) {
-                        AccessibilityManager.clickByText("跳过");
-                        for (String viewId : model.getViews()) {
-                            AccessibilityManager.clickByViewId(viewId);
-                        }
-                    } else if ("1".equals(model.getType())) {
-                        scrollDown(false, model);
-                        for (String viewId : model.getViews()) {
-                            AccessibilityManager.getInstance().clickByViewIdForList(viewId);
-                        }
-                    } else if ("2".equals(model.getType())) {
-                        scrollDown(true, model);
-                        backHome();
-                        Log.i("----", "阅读完毕回到主页== " + AppUtils.getTopCls());
+        if (AppUtils.getTopCls() == null) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            doTask(appModel);
+            return;
+        }
+        for (AppModel.AppPageModel model : appModel.getPages()) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (model.getClassName().equals(AppUtils.getTopCls())) {
+                if (isStop()) break;
+                Log.i("----", " getType== " + model.getType());
+                if ("0".equals(model.getType())) {
+                    AccessibilityManager.clickByText("跳过");
+                    for (String viewId : model.getViews()) {
+                        AccessibilityManager.clickByViewId(viewId);
                     }
-                } else if (!clsList.contains(AppUtils.getTopCls())) {
-                    if (AppUtils.getTopCls().contains("Video")) {
-                        AccessibilityManager.sendMsg("跳过广告视屏页面");
+                } else if ("1".equals(model.getType())) {
+                    scrollDown(false, model);
+                    for (String viewId : model.getViews()) {
+                        AccessibilityManager.getInstance().clickByViewIdForList(viewId);
                     }
-                    Log.i("----", "没有该页面--回到主页");
+                } else if ("2".equals(model.getType())) {
+                    scrollDown(true, model);
                     backHome();
-                    break;
+                    Log.i("----", "阅读完毕回到主页== " + AppUtils.getTopCls());
                 }
+            } else if (!clsList.contains(AppUtils.getTopCls())) {
+                if (AppUtils.getTopCls().contains("Video")) {
+                    AccessibilityManager.sendMsg("跳过广告视屏页面");
+                }
+                Log.i("----", "没有该页面--回到主页");
+                backHome();
+                break;
             }
         }
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        doTask(appModel);
     }
 
     //上拉
