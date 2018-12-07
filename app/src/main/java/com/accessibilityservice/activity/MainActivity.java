@@ -1,13 +1,20 @@
 package com.accessibilityservice.activity;
 
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.v7.app.AlertDialog;
+import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -23,7 +30,17 @@ import com.accessibilityservice.util.AppUtils;
 import com.accessibilityservice.util.DeviceIdUtils;
 import com.accessibilityservice.util.Shell;
 import com.accessibilityservice.util.TimeUtil;
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVFile;
+import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.FindCallback;
+import com.fingerth.supdialogutils.SYSDiaLogUtils;
+import com.liulishuo.filedownloader.BaseDownloadTask;
+import com.liulishuo.filedownloader.FileDownloadListener;
+import com.liulishuo.filedownloader.FileDownloader;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,8 +65,23 @@ public class MainActivity extends BaseActivity {
         public void handleMessage(Message message) {
             switch (message.what) {
                 case 0:
-                    MainActivity.this.hideLoading();
-                    Toasty.info(MainActivity.this, "当前已是最新版本", 0, true).show();
+                    AVQuery<AVObject> mQuery = new AVQuery<>("Version");
+                    mQuery.findInBackground(new FindCallback<AVObject>() {
+                        @Override
+                        public void done(List<AVObject> list, AVException e) {
+                            MainActivity.this.hideLoading();
+                            if (e==null&&list.size()>0){
+                                AVObject avObject = list.get(0);
+                                if (Float.parseFloat(avObject.getString("version_name"))>Float.parseFloat(BuildConfig.VERSION_NAME)){
+                                    showUpdateDilaog(MainActivity.this,avObject);
+                                }else{
+                                    Toasty.info(MainActivity.this, "当前已是最新版本", 0, true).show();
+                                }
+                            }else{
+                                Toasty.info(MainActivity.this, "当前已是最新版本", 0, true).show();
+                            }
+                        }
+                    });
                     break;
                 case 1:
                     MainActivity.this.hideLoading();
@@ -92,6 +124,79 @@ public class MainActivity extends BaseActivity {
             super.handleMessage(message);
         }
     };
+
+
+    public static void showUpdateDilaog(final Activity mContext, final AVObject mVersionInfo){
+        AlertDialog.Builder mBuilder=new AlertDialog.Builder(mContext);
+        mBuilder.setTitle("版本更新");
+        mBuilder.setMessage(mVersionInfo.getString("version_des"));
+        mBuilder.setCancelable(false);
+        mBuilder.setPositiveButton("立即升级", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                showDownLoadDialog(mContext,mVersionInfo.getAVFile("download_apk"));
+            }
+        });
+        if (mVersionInfo.getInt("update_type")==2){
+            mBuilder.setNegativeButton("稍后再说",null);
+        }
+        AlertDialog show = mBuilder.show();
+
+        show.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(mContext.getResources().getColor(R.color.gray_a3));
+        //“确”定按钮字体颜色
+        show.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(mContext.getResources().getColor(android.R.color.holo_green_dark));
+    }
+
+
+    private static void showDownLoadDialog(final Activity mContext, final AVFile mVersionInfo){
+        File mFile =new File(Environment.getExternalStorageDirectory(),mVersionInfo.getUrl().substring(mVersionInfo.getUrl().lastIndexOf("/")+1));
+        FileDownloader.getImpl().create(mVersionInfo.getUrl())
+                .setPath(mFile.getAbsolutePath())
+                .setListener(new FileDownloadListener() {
+                    @Override
+                    protected void pending(BaseDownloadTask task, int soFarBytes, int totalBytes) {
+                        Log.i("FileDownloader-pending","soFarBytes:"+soFarBytes+",totalBytes:"+totalBytes);
+                        SYSDiaLogUtils.showProgressBar(mContext, SYSDiaLogUtils.SYSDiaLogType.RoundWidthNumberProgressBar,"下载中...");
+                        SYSDiaLogUtils.setProgressBar(0);
+                    }
+
+                    @Override
+                    protected void progress(BaseDownloadTask task, int soFarBytes, int totalBytes) {
+                        Log.i("FileDownloader-progress","soFarBytes:"+soFarBytes+",totalBytes:"+totalBytes);
+                        SYSDiaLogUtils.setProgressBar((int) ((100F*soFarBytes)/totalBytes));
+                    }
+
+                    @Override
+                    protected void completed(BaseDownloadTask task) {
+                        Log.i("FileDownloader-complete","completed");
+                        SYSDiaLogUtils.dismissProgress();
+
+                        Intent intent = new Intent();
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.setAction(Intent.ACTION_VIEW);
+                        Uri uri = Uri.fromFile(new File(task.getPath()));
+                        intent.setDataAndType(uri, "application/vnd.android.package-archive");
+                        mContext.startActivity(intent);
+                    }
+
+                    @Override
+                    protected void paused(BaseDownloadTask task, int soFarBytes, int totalBytes) {
+                        Log.i("FileDownloader-paused","paused");
+                    }
+
+                    @Override
+                    protected void error(BaseDownloadTask task, Throwable e) {
+                        Log.i("FileDownloader-error",e.getMessage());
+                        SYSDiaLogUtils.dismissProgress();
+                    }
+
+                    @Override
+                    protected void warn(BaseDownloadTask task) {
+                        Log.i("FileDownloader-warn","warn");
+                    }
+                }).start();
+    }
+
 
     @Override
     public int setContentView() {

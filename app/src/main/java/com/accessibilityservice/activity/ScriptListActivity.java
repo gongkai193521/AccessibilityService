@@ -10,6 +10,7 @@ import com.accessibilityservice.MainApplication;
 import com.accessibilityservice.R;
 import com.accessibilityservice.adapter.JsAdapter;
 import com.accessibilityservice.manager.TaskManager;
+import com.accessibilityservice.manager.UserManager;
 import com.accessibilityservice.model.AppModel;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
@@ -168,6 +169,10 @@ public class ScriptListActivity extends BaseActivity {
     private List<AppModel> chooseList = new ArrayList<>();
 
     private void execute(boolean isRandom) {
+        if (System.currentTimeMillis() > UserManager.getInstance().getLogin().expiry_date) {
+            Toasty.normal(mContext, "服务已到期,请续费!").show();
+            return;
+        }
         chooseList.clear();
         for (AppModel mAppModel : list) {
             if (mAppModel.isInstall && mAppModel.isChoose) {
@@ -179,7 +184,13 @@ public class ScriptListActivity extends BaseActivity {
             return;
         }
         if (isRandom) {
-            Collections.shuffle(chooseList);
+            List<AppModel> mtempLists=new ArrayList<>();
+            mtempLists.addAll(chooseList);
+            chooseList.clear();
+            for (int i=0;i<100;i++) {
+                Collections.shuffle(mtempLists);
+                chooseList.addAll(mtempLists);
+            }
             Toasty.info(mContext, "开始随机执行", 0, true).show();
         } else {
             Toasty.info(mContext, "开始顺序执行", 0, true).show();
