@@ -75,7 +75,7 @@ public class AccessibilityManager {
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     public static boolean clickByViewId(String viewId) {
         for (AccessibilityNodeInfo nodeInfo : MyAccessibilityService.getList()) {
-            if (viewId.equals(nodeInfo.getViewIdResourceName())) {
+            if (nodeInfo.isVisibleToUser() && viewId.equals(nodeInfo.getViewIdResourceName())) {
                 Rect rect2 = new Rect();
                 nodeInfo.getBoundsInScreen(rect2);
                 Shell.execute("input tap " + rect2.left + " " + rect2.top);
@@ -91,8 +91,19 @@ public class AccessibilityManager {
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    public static boolean clickByRect() {
-        Shell.execute("input tap 340 440");
+    public static boolean clickByViewIdAndText(String viewId, String text) {
+        for (AccessibilityNodeInfo nodeInfo : MyAccessibilityService.getList()) {
+            if (viewId.equals(nodeInfo.getViewIdResourceName())) {
+                CharSequence charSequence = nodeInfo.getText();
+                if (charSequence != null && text.equals(charSequence.toString())) {
+                    Rect rect2 = new Rect();
+                    nodeInfo.getBoundsInScreen(rect2);
+                    Shell.execute("input tap " + rect2.left + " " + rect2.top);
+                    Log.i("----", "点击viewId== " + viewId + " text==" + text);
+                    break;
+                }
+            }
+        }
         return false;
     }
 
@@ -103,6 +114,9 @@ public class AccessibilityManager {
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     public static boolean clickByText(String text) {
         for (AccessibilityNodeInfo nodeInfo : MyAccessibilityService.getList()) {
+            if (!nodeInfo.isVisibleToUser()) {
+                return false;
+            }
             CharSequence text1 = nodeInfo.getText();
             CharSequence description = nodeInfo.getContentDescription();
             String[] strings;
