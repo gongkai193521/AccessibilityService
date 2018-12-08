@@ -48,7 +48,7 @@ android {
     //修改生成的apk名字
     android.applicationVariants.all { variant ->
         variant.outputs.all {
-            def releaseApkName = '茄子辅助_' + vsionCode + "_" + variant.buildType.name + '.apk'
+            def releaseApkName = '阅读宝_' + vsionCode + "_" + variant.buildType.name + '.apk'
             outputFileName = new File("../deploy", releaseApkName)
         }
     }
