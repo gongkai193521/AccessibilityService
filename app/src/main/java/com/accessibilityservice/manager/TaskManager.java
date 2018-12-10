@@ -48,8 +48,8 @@ public class TaskManager {
     //是否停止执行
     private boolean isStop() {
         ScriptListActivity activity = ScriptListActivity.getActivity();
-        if (activity!=null){
-            if (activity.getMaxTime()!=null&&System.currentTimeMillis()>=activity.getMaxTime()){
+        if (activity != null) {
+            if (activity.getMaxTime() != null && System.currentTimeMillis() >= activity.getMaxTime()) {
                 TaskManager.getInstance().stop();
             }
         }
@@ -154,20 +154,34 @@ public class TaskManager {
         Log.i("----", "scroolCount == " + scroolCount);
         for (; ; ) {
             if (isStop()) break;
-            y = getRandom(100, 150);
+            y = getRandom(100, 300);
             if (isDetails) {//详情页 4-13次随机滑动次数，3-10秒滑动一次
                 sleepTime = getRandom(3, 10);
             } else {//主页 1到3次随机滑动次数， 2到5秒滑动一次
                 sleepTime = getRandom(2, 5);
             }
+            Log.i("----", "y == " + y);
             Log.i("----", "sleepTime == " + sleepTime);
             if (count < scroolCount) {
                 count++;
                 ActivityInfo topActivity = AppUtils.getTopActivity();
+                String topCls = topActivity.getClsName();
+                if (!clsList.contains(topCls) || !model.getClassName().equals(topCls)) {
+                    Log.i("----", "不是该页面--回到主页");
+                    backHome();
+                    break;
+                } else if (isDetails) {
+                    for (String viewId : model.getViews()) {//点击阅读全文
+                        AccessibilityManager.clickByViewId(viewId);
+                    }
+                    if (!"com.yanhui.qktx".equals(topActivity.getPkgName())) {
+                        AccessibilityManager.clickByText("查看全文,阅读全文,展开全文");
+                    }
+                }
                 if (appModel.getAppPackage().equals(topActivity.getPkgName())) {
                     if (Build.VERSION.SDK_INT < 21 && isDetails) {
                         if (topActivity.getPkgName().equals("cn.weli.story") || topActivity.getPkgName().equals("com.martian.hbnews")) {
-                            Shell.execute("input swipe " + y + " 600 " + y + " " + y);
+                            Shell.execute("input swipe " + y + " 800 " + y + " " + y);
                             Shell.exec("input keyevent 20");
                         } else {
                             Shell.exec("input keyevent 20");
@@ -176,18 +190,7 @@ public class TaskManager {
                             Shell.exec("input keyevent 20");
                         }
                     } else {
-                        Shell.execute("input swipe " + y + " 600 " + y + " " + y);
-                    }
-                    String topCls = topActivity.getClsName();
-                    if (!clsList.contains(topCls) || !model.getClassName().equals(topCls)) {
-                        Log.i("----", "不是该页面--回到主页");
-                        backHome();
-                        break;
-                    } else if (isDetails) {
-                        for (String viewId : model.getViews()) {//点击阅读全文
-                            AccessibilityManager.clickByViewId(viewId);
-                        }
-                        AccessibilityManager.clickByText("查看全文,阅读全文,展开全文");
+                        Shell.execute("input swipe " + y + " 800 " + y + " " + y);
                     }
                 } else {
                     break;
