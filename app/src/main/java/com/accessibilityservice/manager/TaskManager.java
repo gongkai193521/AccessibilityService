@@ -137,28 +137,32 @@ public class TaskManager {
 
     //上拉
     private void scrollDown(boolean isDetails, AppModel.AppPageModel model) {
-        Random random = new Random();
-        final int y = random.nextInt(50) + 100;
-        long planTime;
+        int y;
         int sleepTime;
-        if (isDetails) {//详情页
-            sleepTime = random.nextInt(2) + 2;
-            planTime = model.getPlanTime();
-        } else {//主页
-            sleepTime = random.nextInt(2) + 2;
-            planTime = (random.nextInt(5) + 3) * 1000;
+        int scroolCount;
+        int count = 0;
+        if (isDetails) {//详情页 4-13次随机滑动次数，3-10秒滑动一次
+            scroolCount = getRandom(4, 13);
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } else {//主页 1到3次随机滑动次数， 2到5秒滑动一次
+            scroolCount = getRandom(1, 3);
         }
-        long lasTime = System.currentTimeMillis();
+        Log.i("----", "scroolCount == " + scroolCount);
         for (; ; ) {
             if (isStop()) break;
-            if (System.currentTimeMillis() - lasTime < planTime) {
-                if (isDetails) {
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+            y = getRandom(100, 150);
+            if (isDetails) {//详情页 4-13次随机滑动次数，3-10秒滑动一次
+                sleepTime = getRandom(3, 10);
+            } else {//主页 1到3次随机滑动次数， 2到5秒滑动一次
+                sleepTime = getRandom(2, 5);
+            }
+            Log.i("----", "sleepTime == " + sleepTime);
+            if (count < scroolCount) {
+                count++;
                 ActivityInfo topActivity = AppUtils.getTopActivity();
                 if (appModel.getAppPackage().equals(topActivity.getPkgName())) {
                     if (Build.VERSION.SDK_INT < 21 && isDetails) {
@@ -197,6 +201,12 @@ public class TaskManager {
                 break;
             }
         }
+    }
+
+    private int getRandom(int min, int max) {
+        Random random = new Random();
+        int num = random.nextInt(max) % (max - min + 1) + min;
+        return num;
     }
 
     private void backHome() {
