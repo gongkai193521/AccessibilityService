@@ -1,10 +1,20 @@
 package com.accessibilityservice.activity;
 
+import android.app.AlarmManager;
+import android.app.Dialog;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.accessibilityservice.MainApplication;
 import com.accessibilityservice.R;
@@ -12,17 +22,25 @@ import com.accessibilityservice.adapter.JsAdapter;
 import com.accessibilityservice.manager.TaskManager;
 import com.accessibilityservice.manager.UserManager;
 import com.accessibilityservice.model.AppModel;
+import com.accessibilityservice.util.TimeUtil;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.FindCallback;
+import com.bigkoo.pickerview.adapter.NumericWheelAdapter;
+import com.bigkoo.pickerview.builder.TimePickerBuilder;
+import com.bigkoo.pickerview.listener.OnTimeSelectListener;
+import com.bigkoo.pickerview.view.TimePickerView;
+import com.contrarywind.view.WheelView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -42,6 +60,26 @@ public class ScriptListActivity extends BaseActivity {
         this.progressDialog.show();
     }
 
+    private static ScriptListActivity mScriptListActivity;
+
+    public static ScriptListActivity getActivity(){
+        return mScriptListActivity;
+    }
+
+    public Long getMaxTime(){
+        if (tv_endTime==null||tv_endTime.getTag()==null||tv_endTime==null||tv_endTime.getTag()==null)return null;
+        String[] split = ((String) tv_endTime.getTag()).split(":");
+        Calendar calendar = Calendar.getInstance();
+        if (TimeUtil.parseTime((String) tv_startTime.getTag())>TimeUtil.parseTime((String) tv_endTime.getTag())){
+            calendar.add(Calendar.DATE,1);
+        }
+        calendar.set(Calendar.HOUR_OF_DAY,Integer.valueOf(split[0]));
+        calendar.set(Calendar.MINUTE,Integer.valueOf(split[1]));
+        calendar.set(Calendar.SECOND,Integer.valueOf(split[2]));
+        return calendar.getTimeInMillis();
+    }
+
+
     @Override
     public int setContentView() {
         return R.layout.activity_my_js_list;
@@ -49,13 +87,55 @@ public class ScriptListActivity extends BaseActivity {
 
     @Override
     public void setupViews(Bundle savedInstanceState) {
+        mScriptListActivity=this;
         initView();
     }
 
-    private Button btn_reverse_select_all, btn_select_all;
+    private Button btn_reverse_select_all, btn_select_all,btn_right;
+
+    private TextView tv_startTime,tv_endTime;
 
     private void initView() {
         setTitle("已购脚本");
+        tv_startTime=findViewById(R.id.tv_startTime);
+        tv_startTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showChooseTime(tv_startTime);
+            }
+        });
+        tv_endTime=findViewById(R.id.tv_endTime);
+        tv_endTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showChooseTime(tv_endTime);
+            }
+        });
+        btn_right=findViewById(R.id.btn_right);
+        btn_right.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(tv_startTime.getTag()==null||tv_endTime.getTag()==null){
+                    Toasty.normal(mContext, "请先设置时间!").show();
+                    return;
+                }
+                String[] split = ((String) tv_startTime.getTag()).split(":");
+                Intent intent = new Intent(ScriptListActivity.this,
+                        RepeatingAlarm.class);
+                PendingIntent sender = PendingIntent.getBroadcast(
+                        ScriptListActivity.this, 0, intent, 0);
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(System.currentTimeMillis());
+                calendar.set(Calendar.HOUR_OF_DAY,Integer.valueOf(split[0]));
+                calendar.set(Calendar.MINUTE,Integer.valueOf(split[1]));
+                calendar.set(Calendar.SECOND,Integer.valueOf(split[2]));
+                // Schedule the alarm!
+                AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+                am.setRepeating(AlarmManager.RTC_WAKEUP,
+                        calendar.getTimeInMillis(), 24*60*60 * 1000, sender);
+                Toasty.normal(mContext, "开启成功!").show();
+            }
+        });
         this.progressDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
         this.progressDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
         lv_list = findViewById(R.id.lv_list);
@@ -75,6 +155,14 @@ public class ScriptListActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         release();
+        Intent intent = new Intent(ScriptListActivity.this,
+                RepeatingAlarm.class);
+        PendingIntent sender = PendingIntent.getBroadcast(
+                ScriptListActivity.this, 0, intent, 0);
+
+        // And cancel the alarm.
+        AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+        am.cancel(sender);
     }
 
     public void onNormalRuns(View view) {
@@ -214,5 +302,92 @@ public class ScriptListActivity extends BaseActivity {
                 }
             }
         });
+    }
+
+
+    private void showChooseTime(final TextView mTextView){
+        Object tag = mTextView.getTag();
+        if(tag==null){
+            tag="00:00:00";
+        }
+        Calendar selectedDate = Calendar.getInstance();
+        selectedDate.setTime(new Date(TimeUtil.parseTime((String)tag)));
+        Calendar startDate = Calendar.getInstance();
+        startDate.set(Calendar.HOUR_OF_DAY,0);
+        startDate.set(Calendar.MINUTE,0);
+        startDate.set(Calendar.SECOND,0);
+        Calendar endDate = Calendar.getInstance();
+        endDate.set(Calendar.HOUR_OF_DAY,23);
+        endDate.set(Calendar.MINUTE,59);
+        endDate.set(Calendar.SECOND,59);
+        //正确设置方式 原因：注意事项有说明
+        TimePickerView pvTime = new TimePickerBuilder(this, new OnTimeSelectListener() {
+            @Override
+            public void onTimeSelect(Date date, View v) {//选中事件回调
+                Calendar mDate = Calendar.getInstance();
+                mDate.setTime(date);
+                int hour=mDate.get(Calendar.HOUR_OF_DAY);
+                int miute=mDate.get(Calendar.MINUTE);
+                int second=mDate.get(Calendar.SECOND);
+                String time=(hour<10?"0"+hour:hour+"")+":"+(miute<10?"0"+miute:miute+"")+":"+(second<10?"0"+second:second+"");
+
+                if (mTextView.getId()==R.id.tv_startTime){
+                    if (time.equals("00:00:00")){
+                        mTextView.setText("开始时间");
+                        mTextView.setTag(null);
+                        return;
+                    }else {
+                        mTextView.setText("开始时间:" + time);
+                    }
+                }else{
+                    if (time.equals("00:00:00")){
+                        mTextView.setText("结束时间");
+                        mTextView.setTag(null);
+                        return;
+                    }else {
+                        mTextView.setText("结束时间:" + time);
+                    }
+                }
+                mTextView.setTag(time);
+            }
+        })
+                .setType(new boolean[]{false, false, false, true, true,true})// 默认全部显示
+                .setCancelText("取消")//取消按钮文字
+                .setSubmitText("确定")//确认按钮文字
+                .setContentTextSize(15)//滚轮文字大小
+                .setTitleSize(15)//标题文字大小
+                .setTitleText("选择时间")//标题文字
+                .setOutSideCancelable(true)//点击屏幕，点在控件外部范围时，是否取消显示
+                .isCyclic(false)//是否循环滚动
+                .setTitleColor(Color.BLACK)//标题文字颜色
+                .setSubmitColor(Color.BLUE)//确定按钮文字颜色
+                .setCancelColor(Color.GRAY)//取消按钮文字颜色
+                .setTitleBgColor(Color.WHITE)//标题背景颜色 Night mode
+                .setBgColor(Color.WHITE)//滚轮背景颜色 Night mode
+                .setDate(selectedDate)// 如果不设置的话，默认是系统时间*/
+                .setRangDate(startDate,endDate)//起始终止年月日设定
+                .setLabel("年","月","日","时","分","秒")//默认设置为年月日时分秒
+                .isCenterLabel(true) //是否只显示中间选中项的label文字，false则每项item全部都带有label。
+                .isDialog(true)//是否显示为对话框样式
+                .build();
+        Dialog mDialog = pvTime.getDialog();
+        if (mDialog != null) {
+
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    Gravity.BOTTOM);
+
+            params.leftMargin = 0;
+            params.rightMargin = 0;
+            pvTime.getDialogContainerLayout().setLayoutParams(params);
+
+            Window dialogWindow = mDialog.getWindow();
+            if (dialogWindow != null) {
+                dialogWindow.setWindowAnimations(com.bigkoo.pickerview.R.style.picker_view_slide_anim);//修改动画样式
+                dialogWindow.setGravity(Gravity.BOTTOM);//改成Bottom,底部显示
+            }
+        }
+        pvTime.show();
     }
 }

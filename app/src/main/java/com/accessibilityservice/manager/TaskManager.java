@@ -4,6 +4,7 @@ import android.os.Build;
 import android.util.Log;
 
 import com.accessibilityservice.MainApplication;
+import com.accessibilityservice.activity.ScriptListActivity;
 import com.accessibilityservice.model.ActivityInfo;
 import com.accessibilityservice.model.AppModel;
 import com.accessibilityservice.service.MyAccessibilityService;
@@ -46,6 +47,12 @@ public class TaskManager {
 
     //是否停止执行
     private boolean isStop() {
+        ScriptListActivity activity = ScriptListActivity.getActivity();
+        if (activity!=null){
+            if (activity.getMaxTime()!=null&&System.currentTimeMillis()>=activity.getMaxTime()){
+                TaskManager.getInstance().stop();
+            }
+        }
         if (isStop || System.currentTimeMillis() - runStartTime >= appModel.getPlanTime()) {
             Shell.exec("am force-stop " + appModel.getAppPackage(), true);
             Shell.exec("am start -n " + MainApplication.getContext().getPackageName() + "/com.accessibilityservice.activity.ScriptListActivity");
