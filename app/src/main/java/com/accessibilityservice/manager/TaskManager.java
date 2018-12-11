@@ -24,6 +24,7 @@ public class TaskManager {
     private volatile static TaskManager instance = null;
     private static boolean isStop = false;//停止脚本
     private long runStartTime;
+    private long runTime;
     private AppModel appModel;
     private List<String> clsList;
     private String homeCls;
@@ -50,10 +51,11 @@ public class TaskManager {
         ScriptListActivity activity = ScriptListActivity.getActivity();
         if (activity != null) {
             if (activity.getMaxTime() != null && System.currentTimeMillis() >= activity.getMaxTime()) {
-                TaskManager.getInstance().stop();
+                stop();
             }
         }
-        if (isStop || System.currentTimeMillis() - runStartTime >= appModel.getPlanTime()) {
+        //一个平台10-20分钟
+        if (isStop || System.currentTimeMillis() - runStartTime >= runTime) {
             Shell.exec("am force-stop " + appModel.getAppPackage(), true);
             Shell.exec("am start -n " + MainApplication.getContext().getPackageName() + "/com.accessibilityservice.activity.ScriptListActivity");
             return true;
@@ -71,16 +73,16 @@ public class TaskManager {
             return;
         }
         AccessibilityManager.sendMsg("执行" + appModel.getAppName() + "脚本");
-        Log.i("----", "开始执行== " + appModel.getAppName() + "脚本\n"
-                + " appmodel== " + GsonUtils.toJson(appModel));
+        Log.i("----", "开始执行-appmodel== " + GsonUtils.toJson(appModel));
         runStartTime = System.currentTimeMillis();
+        runTime = getRandom(10, 20) * 60 * 1000;
+        this.appModel = appModel;
         for (AppModel.AppPageModel model : appModel.getPages()) {
             clsList.add(model.getClassName());
             if (model.getType().equals("1")) {
                 homeCls = model.getClassName();
             }
         }
-        this.appModel = appModel;
         doTask(appModel);
     }
 
@@ -141,23 +143,23 @@ public class TaskManager {
         int sleepTime;
         int scroolCount;
         int count = 0;
-        if (isDetails) {//详情页 4-13次随机滑动次数，3-10秒滑动一次
-            scroolCount = getRandom(4, 13);
+        if (isDetails) {//详情页 6-20次随机滑动次数
+            scroolCount = getRandom(6, 20);
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        } else {//主页 1到3次随机滑动次数， 2到5秒滑动一次
+        } else {//主页 1到3次随机滑动次数
             scroolCount = getRandom(1, 3);
         }
         Log.i("----", "scroolCount == " + scroolCount);
         for (; ; ) {
             if (isStop()) break;
             y = getRandom(100, 300);
-            if (isDetails) {//详情页 4-13次随机滑动次数，3-10秒滑动一次
-                sleepTime = getRandom(3, 10);
-            } else {//主页 1到3次随机滑动次数， 2到5秒滑动一次
+            if (isDetails) {//详情页 3-5秒滑动一次
+                sleepTime = getRandom(3, 5);
+            } else {//主页 2到5秒滑动一次
                 sleepTime = getRandom(2, 5);
             }
             Log.i("----", "y == " + y);
@@ -179,17 +181,24 @@ public class TaskManager {
                     }
                 }
                 if (appModel.getAppPackage().equals(topActivity.getPkgName())) {
-                    if (Build.VERSION.SDK_INT < 21 && isDetails) {
-                        if (topActivity.getPkgName().equals("cn.weli.story") || topActivity.getPkgName().equals("com.martian.hbnews")) {
+                    if (isDetails) {
+                        if (Build.VERSION.SDK_INT < 21) {
+                            if (topActivity.getPkgName().equals("cn.weli.story")
+                                    || topActivity.getPkgName().equals("com.martian.hbnews")) {
+                                Shell.execute("input swipe " + y + " 800 " + y + " " + y);
+                                Shell.exec("input keyevent 20");
+                            } else {
+                                Shell.exec("input keyevent 20");
+                                Shell.exec("input keyevent 20");
+                                Shell.exec("input keyevent 20");
+                                Shell.exec("input keyevent 20");
+                            }
+                        } else if (random.nextBoolean()) {//下滑
+                            Shell.execute("input swipe " + y + " " + y + " " + y + " 800 ");
+                        } else {//上滑
                             Shell.execute("input swipe " + y + " 800 " + y + " " + y);
-                            Shell.exec("input keyevent 20");
-                        } else {
-                            Shell.exec("input keyevent 20");
-                            Shell.exec("input keyevent 20");
-                            Shell.exec("input keyevent 20");
-                            Shell.exec("input keyevent 20");
                         }
-                    } else {
+                    } else {//上滑
                         Shell.execute("input swipe " + y + " 800 " + y + " " + y);
                     }
                 } else {
@@ -206,8 +215,9 @@ public class TaskManager {
         }
     }
 
+    Random random = new Random();
+
     private int getRandom(int min, int max) {
-        Random random = new Random();
         int num = random.nextInt(max) % (max - min + 1) + min;
         return num;
     }
@@ -220,13 +230,6 @@ public class TaskManager {
         } else {
             Shell.exec("am start -n " + appModel.getAppPackage() + "/" + homeCls);
         }
-    }
-
-    //下拉刷新
-    public void scrollUp() {
-        Random random = new Random();
-        int y = random.nextInt(50) + 100;
-        Shell.execute("input swipe " + y + " " + y + " " + y + 400);
     }
 
     public void setStop(boolean stop) {
