@@ -1,11 +1,11 @@
 package com.accessibilityservice.activity;
 
-import android.app.AlarmManager;
 import android.app.Dialog;
-import android.app.PendingIntent;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,11 +27,9 @@ import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.FindCallback;
-import com.bigkoo.pickerview.adapter.NumericWheelAdapter;
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
 import com.bigkoo.pickerview.listener.OnTimeSelectListener;
 import com.bigkoo.pickerview.view.TimePickerView;
-import com.contrarywind.view.WheelView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -120,19 +118,21 @@ public class ScriptListActivity extends BaseActivity {
                     return;
                 }
                 String[] split = ((String) tv_startTime.getTag()).split(":");
-                Intent intent = new Intent(ScriptListActivity.this,
-                        RepeatingAlarm.class);
-                PendingIntent sender = PendingIntent.getBroadcast(
-                        ScriptListActivity.this, 0, intent, 0);
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(System.currentTimeMillis());
                 calendar.set(Calendar.HOUR_OF_DAY,Integer.valueOf(split[0]));
                 calendar.set(Calendar.MINUTE,Integer.valueOf(split[1]));
                 calendar.set(Calendar.SECOND,Integer.valueOf(split[2]));
-                // Schedule the alarm!
-                AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-                am.setRepeating(AlarmManager.RTC_WAKEUP,
-                        calendar.getTimeInMillis(), 24*60*60 * 1000, sender);
+                if (mHandler.hasMessages(200)){
+                    mHandler.removeMessages(200);
+                }
+                if (calendar.getTimeInMillis()<System.currentTimeMillis()){
+                    long delay=24*60*60 * 1000-(System.currentTimeMillis()-calendar.getTimeInMillis());
+                    mHandler.sendEmptyMessageDelayed(200,delay);
+                }else{
+                    long delay=calendar.getTimeInMillis()-System.currentTimeMillis();
+                    mHandler.sendEmptyMessageDelayed(200,delay);
+                }
                 Toasty.normal(mContext, "开启成功!").show();
             }
         });
@@ -152,17 +152,21 @@ public class ScriptListActivity extends BaseActivity {
         getPlatformList();
     }
 
+    private Handler mHandler=new Handler(Looper.getMainLooper()){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            onRandomRuns(null);
+            mHandler.sendEmptyMessageDelayed(200,24*60*60 * 1000);
+        }
+    };
+
     protected void onDestroy() {
         super.onDestroy();
         release();
-        Intent intent = new Intent(ScriptListActivity.this,
-                RepeatingAlarm.class);
-        PendingIntent sender = PendingIntent.getBroadcast(
-                ScriptListActivity.this, 0, intent, 0);
-
-        // And cancel the alarm.
-        AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
-        am.cancel(sender);
+        if (mHandler.hasMessages(200)){
+           mHandler.removeMessages(200);
+        }
     }
 
     public void onNormalRuns(View view) {

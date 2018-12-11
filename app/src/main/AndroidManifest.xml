@@ -76,9 +76,6 @@
                 android:resource="@xml/accessibility_service_config"/>
         </service>
 
-        <receiver
-            android:name=".activity.RepeatingAlarm"
-            android:process=":remote" />
     </application>
 
 </manifest>
