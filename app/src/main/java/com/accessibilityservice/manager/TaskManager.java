@@ -75,7 +75,7 @@ public class TaskManager {
         AccessibilityManager.sendMsg("执行" + appModel.getAppName() + "脚本");
         Log.i("----", "开始执行-appmodel== " + GsonUtils.toJson(appModel));
         runStartTime = System.currentTimeMillis();
-        runTime = getRandom(10, 20) * 60 * 1000;
+        runTime = getIntRandom(10, 20) * 60 * 1000;
         this.appModel = appModel;
         for (AppModel.AppPageModel model : appModel.getPages()) {
             clsList.add(model.getClassName());
@@ -144,23 +144,23 @@ public class TaskManager {
         int scroolCount;
         int count = 0;
         if (isDetails) {//详情页 6-20次随机滑动次数
-            scroolCount = getRandom(6, 20);
+            scroolCount = getIntRandom(6, 20);
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         } else {//主页 1到3次随机滑动次数
-            scroolCount = getRandom(1, 3);
+            scroolCount = getIntRandom(1, 3);
         }
         Log.i("----", "scroolCount == " + scroolCount);
         for (; ; ) {
             if (isStop()) break;
-            y = getRandom(100, 300);
+            y = getIntRandom(100, 300);
             if (isDetails) {//详情页 3-5秒滑动一次
-                sleepTime = getRandom(3, 5);
+                sleepTime = getIntRandom(3, 5);
             } else {//主页 2到5秒滑动一次
-                sleepTime = getRandom(2, 5);
+                sleepTime = getIntRandom(2, 5);
             }
             Log.i("----", "y == " + y);
             Log.i("----", "sleepTime == " + sleepTime);
@@ -193,7 +193,7 @@ public class TaskManager {
                                 Shell.exec("input keyevent 20");
                                 Shell.exec("input keyevent 20");
                             }
-                        } else if (random.nextBoolean()) {//下滑
+                        } else if (getBooleanRandom()) {//下滑
                             Shell.execute("input swipe " + y + " " + y + " " + y + " 800 ");
                         } else {//上滑
                             Shell.execute("input swipe " + y + " 800 " + y + " " + y);
@@ -215,11 +215,15 @@ public class TaskManager {
         }
     }
 
-    Random random = new Random();
-
-    private int getRandom(int min, int max) {
+    private int getIntRandom(int min, int max) {
+        Random random = new Random();
         int num = random.nextInt(max) % (max - min + 1) + min;
         return num;
+    }
+
+    private boolean getBooleanRandom() {
+        Random random = new Random();
+        return random.nextBoolean();
     }
 
     private void backHome() {
