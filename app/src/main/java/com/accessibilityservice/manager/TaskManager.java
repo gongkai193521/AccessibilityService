@@ -28,6 +28,7 @@ public class TaskManager {
     private AppModel appModel;
     private List<String> clsList;
     private String homeCls;
+    private boolean isRefresh;
 
     private TaskManager() {
         if (clsList == null) {
@@ -76,6 +77,7 @@ public class TaskManager {
         Log.i("----", "开始执行-appmodel== " + GsonUtils.toJson(appModel));
         runStartTime = System.currentTimeMillis();
         runTime = getIntRandom(10, 20) * 60 * 1000;
+        isRefresh = false;
         this.appModel = appModel;
         for (AppModel.AppPageModel model : appModel.getPages()) {
             clsList.add(model.getClassName());
@@ -114,6 +116,10 @@ public class TaskManager {
                             AccessibilityManager.clickByViewId(viewId);
                         }
                     } else if ("1".equals(model.getType())) {
+                        if (!isRefresh) {
+                            Shell.execute("input swipe 600 600 600 1200");
+                            isRefresh = true;
+                        }
                         scrollDown(false, model);
                         for (String viewId : model.getViews()) {
                             AccessibilityManager.getInstance().clickByViewIdForList(viewId);
@@ -139,7 +145,6 @@ public class TaskManager {
 
     //上拉
     private void scrollDown(boolean isDetails, AppModel.AppPageModel model) {
-        int y;
         int sleepTime;
         int scroolCount;
         int count = 0;
@@ -156,7 +161,7 @@ public class TaskManager {
         Log.i("----", "scroolCount == " + scroolCount);
         for (; ; ) {
             if (isStop()) break;
-            y = getIntRandom(100, 300);
+            int y = getIntRandom(300, 500);
             if (isDetails) {//详情页 3-5秒滑动一次
                 sleepTime = getIntRandom(3, 5);
             } else {//主页 2到5秒滑动一次
@@ -185,7 +190,7 @@ public class TaskManager {
                         if (Build.VERSION.SDK_INT < 21) {
                             if (topActivity.getPkgName().equals("cn.weli.story")
                                     || topActivity.getPkgName().equals("com.martian.hbnews")) {
-                                Shell.execute("input swipe " + y + " 800 " + y + " " + y);
+                                Shell.execute("input swipe " + y + " 1000 " + y + " " + y);
                                 Shell.exec("input keyevent 20");
                             } else {
                                 Shell.exec("input keyevent 20");
@@ -194,12 +199,12 @@ public class TaskManager {
                                 Shell.exec("input keyevent 20");
                             }
                         } else if (getBooleanRandom()) {//下滑
-                            Shell.execute("input swipe " + y + " " + y + " " + y + " 800 ");
+                            Shell.execute("input swipe " + y + " " + y + " " + y + " 1000 ");
                         } else {//上滑
-                            Shell.execute("input swipe " + y + " 800 " + y + " " + y);
+                            Shell.execute("input swipe " + y + " 1000 " + y + " " + y + " ");
                         }
                     } else {//上滑
-                        Shell.execute("input swipe " + y + " 800 " + y + " " + y);
+                        Shell.execute("input swipe " + y + " 1000 " + y + " " + y + " ");
                     }
                 } else {
                     break;
@@ -223,7 +228,7 @@ public class TaskManager {
 
     private boolean getBooleanRandom() {
         Random random = new Random();
-        return random.nextBoolean();
+        return random.nextInt(10) < 3;
     }
 
     private void backHome() {

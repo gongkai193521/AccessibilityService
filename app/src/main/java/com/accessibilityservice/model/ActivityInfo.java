@@ -1,8 +1,8 @@
 package com.accessibilityservice.model;
 
 public class ActivityInfo {
-    private String pkgName;
-    private String clsName;
+    private String pkgName = "";
+    private String clsName = "";
 
     public String getPkgName() {
         return this.pkgName;
