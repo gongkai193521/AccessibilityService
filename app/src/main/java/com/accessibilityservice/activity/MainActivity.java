@@ -70,14 +70,14 @@ public class MainActivity extends BaseActivity {
                         @Override
                         public void done(List<AVObject> list, AVException e) {
                             MainActivity.this.hideLoading();
-                            if (e==null&&list.size()>0){
+                            if (e == null && list.size() > 0) {
                                 AVObject avObject = list.get(0);
-                                if (Float.parseFloat(avObject.getString("version_name"))>Float.parseFloat(BuildConfig.VERSION_NAME)){
-                                    showUpdateDilaog(MainActivity.this,avObject);
-                                }else{
+                                if (Float.parseFloat(avObject.getString("version_name")) > Float.parseFloat(BuildConfig.VERSION_NAME)) {
+                                    showUpdateDilaog(MainActivity.this, avObject);
+                                } else {
                                     Toasty.info(MainActivity.this, "当前已是最新版本", 0, true).show();
                                 }
-                            }else{
+                            } else {
                                 Toasty.info(MainActivity.this, "当前已是最新版本", 0, true).show();
                             }
                         }
@@ -126,19 +126,19 @@ public class MainActivity extends BaseActivity {
     };
 
 
-    public static void showUpdateDilaog(final Activity mContext, final AVObject mVersionInfo){
-        AlertDialog.Builder mBuilder=new AlertDialog.Builder(mContext);
+    public static void showUpdateDilaog(final Activity mContext, final AVObject mVersionInfo) {
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(mContext);
         mBuilder.setTitle("版本更新");
         mBuilder.setMessage(mVersionInfo.getString("version_des"));
         mBuilder.setCancelable(false);
         mBuilder.setPositiveButton("立即升级", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                showDownLoadDialog(mContext,mVersionInfo.getAVFile("download_apk"));
+                showDownLoadDialog(mContext, mVersionInfo.getAVFile("download_apk"));
             }
         });
-        if (mVersionInfo.getInt("update_type")==2){
-            mBuilder.setNegativeButton("稍后再说",null);
+        if (mVersionInfo.getInt("update_type") == 2) {
+            mBuilder.setNegativeButton("稍后再说", null);
         }
         AlertDialog show = mBuilder.show();
 
@@ -148,27 +148,27 @@ public class MainActivity extends BaseActivity {
     }
 
 
-    private static void showDownLoadDialog(final Activity mContext, final AVFile mVersionInfo){
-        File mFile =new File(Environment.getExternalStorageDirectory(),mVersionInfo.getUrl().substring(mVersionInfo.getUrl().lastIndexOf("/")+1));
+    private static void showDownLoadDialog(final Activity mContext, final AVFile mVersionInfo) {
+        File mFile = new File(Environment.getExternalStorageDirectory(), mVersionInfo.getUrl().substring(mVersionInfo.getUrl().lastIndexOf("/") + 1));
         FileDownloader.getImpl().create(mVersionInfo.getUrl())
                 .setPath(mFile.getAbsolutePath())
                 .setListener(new FileDownloadListener() {
                     @Override
                     protected void pending(BaseDownloadTask task, int soFarBytes, int totalBytes) {
-                        Log.i("FileDownloader-pending","soFarBytes:"+soFarBytes+",totalBytes:"+totalBytes);
-                        SYSDiaLogUtils.showProgressBar(mContext, SYSDiaLogUtils.SYSDiaLogType.RoundWidthNumberProgressBar,"下载中...");
+                        Log.i("FileDownloader-pending", "soFarBytes:" + soFarBytes + ",totalBytes:" + totalBytes);
+                        SYSDiaLogUtils.showProgressBar(mContext, SYSDiaLogUtils.SYSDiaLogType.RoundWidthNumberProgressBar, "下载中...");
                         SYSDiaLogUtils.setProgressBar(0);
                     }
 
                     @Override
                     protected void progress(BaseDownloadTask task, int soFarBytes, int totalBytes) {
-                        Log.i("FileDownloader-progress","soFarBytes:"+soFarBytes+",totalBytes:"+totalBytes);
-                        SYSDiaLogUtils.setProgressBar((int) ((100F*soFarBytes)/totalBytes));
+                        Log.i("FileDownloader-progress", "soFarBytes:" + soFarBytes + ",totalBytes:" + totalBytes);
+                        SYSDiaLogUtils.setProgressBar((int) ((100F * soFarBytes) / totalBytes));
                     }
 
                     @Override
                     protected void completed(BaseDownloadTask task) {
-                        Log.i("FileDownloader-complete","completed");
+                        Log.i("FileDownloader-complete", "completed");
                         SYSDiaLogUtils.dismissProgress();
 
                         Intent intent = new Intent();
@@ -181,18 +181,18 @@ public class MainActivity extends BaseActivity {
 
                     @Override
                     protected void paused(BaseDownloadTask task, int soFarBytes, int totalBytes) {
-                        Log.i("FileDownloader-paused","paused");
+                        Log.i("FileDownloader-paused", "paused");
                     }
 
                     @Override
                     protected void error(BaseDownloadTask task, Throwable e) {
-                        Log.i("FileDownloader-error",e.getMessage());
+                        Log.i("FileDownloader-error", e.getMessage());
                         SYSDiaLogUtils.dismissProgress();
                     }
 
                     @Override
                     protected void warn(BaseDownloadTask task) {
-                        Log.i("FileDownloader-warn","warn");
+                        Log.i("FileDownloader-warn", "warn");
                     }
                 }).start();
     }
@@ -333,7 +333,7 @@ public class MainActivity extends BaseActivity {
     protected void onDestroy() {
         release();
         super.onDestroy();
-        AppUtils.setLauncherEnabled(MainActivity.this,false);
+        AppUtils.setLauncherEnabled(MainActivity.this, false);
     }
 
     public void onLogoff(View view) {
@@ -347,7 +347,7 @@ public class MainActivity extends BaseActivity {
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.hide();
                         MainActivity.this.logoff();
-                        AppUtils.setLauncherEnabled(MainActivity.this,false);
+                        AppUtils.setLauncherEnabled(MainActivity.this, false);
                     }
                 }).show();
     }
