@@ -119,6 +119,11 @@ public class TaskManager {
                         if (!isRefresh) {
                             Shell.execute("input swipe 600 600 600 1200");
                             isRefresh = true;
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
                         scrollDown(false, model);
                         for (String viewId : model.getViews()) {
