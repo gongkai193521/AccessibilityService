@@ -69,7 +69,7 @@ dependencies {
     implementation 'com.android.support:design:26.1.0'
     implementation 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
     implementation 'com.github.GrenderG:Toasty:1.3.0'
-    compile 'com.scwang.smartrefresh:SmartRefreshLayout:latest.integration'
+    compile 'com.scwang.smartrefresh:SmartRefreshLayout:1.0.4-7'
     compile project(':library')
     // LeanCloud 基础包
 

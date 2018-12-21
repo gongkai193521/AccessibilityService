@@ -58,7 +58,7 @@ public class TaskManager {
         //一个平台10-20分钟
         if (isStop || System.currentTimeMillis() - runStartTime >= runTime) {
             Shell.exec("am force-stop " + appModel.getAppPackage(), true);
-            Shell.exec("am start -n " + MainApplication.getContext().getPackageName() + "/com.accessibilityservice.activity.ScriptListActivity");
+            Shell.exec("am start -n " + MainApplication.getContext().getPackageName() + "/" + ScriptListActivity.class.getName());
             return true;
         }
         return false;
@@ -161,7 +161,7 @@ public class TaskManager {
                 e.printStackTrace();
             }
         } else {//主页 1到3次随机滑动次数
-            scroolCount = getIntRandom(1, 3);
+            scroolCount = getIntRandom(1, 2);
         }
         Log.i("----", "scroolCount == " + scroolCount);
         for (; ; ) {
@@ -170,7 +170,7 @@ public class TaskManager {
             if (isDetails) {//详情页 3-5秒滑动一次
                 sleepTime = getIntRandom(3, 5);
             } else {//主页 2到5秒滑动一次
-                sleepTime = getIntRandom(2, 5);
+                sleepTime = getIntRandom(1, 2);
             }
             Log.i("----", "y == " + y);
             Log.i("----", "sleepTime == " + sleepTime);
@@ -195,7 +195,7 @@ public class TaskManager {
                         if (Build.VERSION.SDK_INT < 21) {
                             if (topActivity.getPkgName().equals("cn.weli.story")
                                     || topActivity.getPkgName().equals("com.martian.hbnews")) {
-                                Shell.execute("input swipe " + y + " 1000 " + y + " " + y);
+                                Shell.execute("input swipe " + y + " 1300 " + y + " " + y);
                                 Shell.exec("input keyevent 20");
                             } else {
                                 Shell.exec("input keyevent 20");
@@ -206,10 +206,10 @@ public class TaskManager {
                         } else if (getBooleanRandom()) {//下滑
                             Shell.execute("input swipe " + y + " " + y + " " + y + " 1000 ");
                         } else {//上滑
-                            Shell.execute("input swipe " + y + " 1000 " + y + " " + y + " ");
+                            Shell.execute("input swipe " + y + " 1300 " + y + " " + y + " ");
                         }
                     } else {//上滑
-                        Shell.execute("input swipe " + y + " 1000 " + y + " " + y + " ");
+                        Shell.execute("input swipe " + y + " 1300 " + y + " " + y + " ");
                     }
                 } else {
                     break;
@@ -223,6 +223,72 @@ public class TaskManager {
                 break;
             }
         }
+    }
+
+    private void sign() {
+        switch (AppUtils.getTopPkg()) {
+            case "com.cashtoutiao"://惠头条
+                AccessibilityManager.clickByViewIdAndText("com.cashtoutiao:id/count_down_tv", "点击领取");
+                AccessibilityManager.clickByText("任务中心");
+                AccessibilityManager.clickByViewId("com.cashtoutiao:id/sign_btn_container");
+                break;
+            case "cn.viaweb.toutiao"://阅新闻
+                AccessibilityManager.clickByText("领取");
+                AccessibilityManager.clickByViewIdAndText("cn.viaweb.toutiao:id/smallLabel", "任务中心");
+                AccessibilityManager.clickByText("今日签到");
+                AccessibilityManager.clickByViewIdAndText("cn.viaweb.toutiao:id/smallLabel", "头条");
+                break;
+            case "cn.youth.news"://中青看点
+                skip("cn.youth.news", "com.weishang.wxrd.activity.MoreActivity");
+                AccessibilityManager.clickByText("签到领红包");
+                break;
+            case "com.zhangku.qukandian"://趣看点
+                AccessibilityManager.clickByText("可领取");
+                AccessibilityManager.clickByViewIdAndText("com.zhangku.qukandian:id/activity_main_tab_shoutu", "任务");
+                AccessibilityManager.clickByViewIdAndText("com.zhangku.qukandian:id/signTV", "签到");
+                AccessibilityManager.clickByViewIdAndText("com.zhangku.qukandian:id/activity_main_tab_information", "首页");
+                break;
+            case "com.huolea.bull"://牛牛头条
+                AccessibilityManager.clickByText("点击领取");
+                AccessibilityManager.clickByViewIdAndText("com.huolea.bull:id/id_layout_navigation_task_text", "每日金币");
+                AccessibilityManager.clickByText("签到");
+                AccessibilityManager.clickByViewIdAndText("com.huolea.bull:id/id_layout_navigation_news_text", "资讯");
+                break;
+            case "com.ifeng.kuaitoutiao"://快头条
+                skip("com.ifeng.kuaitoutiao", "com.ifeng.news2.advertise.AdDetailActivity");
+                AccessibilityManager.clickByText("立即签到");
+                break;
+            case "com.martian.hbnews"://红包头条
+                skip("com.martian.hbnews", "com.martian.hbnews.activity.MainActivity");
+                AccessibilityManager.clickByViewIdAndText("com.martian.hbnews:id/tab_textview", "任务");
+                AccessibilityManager.clickByViewIdAndText("com.martian.hbnews:id/mc_sign", "签到");
+                AccessibilityManager.clickByViewIdAndText("com.martian.hbnews:id/tab_textview", "头条");
+                break;
+            case "com.songheng.eastnews"://东方头条
+                AccessibilityManager.clickByViewIdAndText("com.songheng.eastnews:id/jx", "任务");
+                AccessibilityManager.clickByViewIdAndText("signIn", "立即签到");
+                AccessibilityManager.clickByViewIdAndText("com.songheng.eastnews:id/jq", "新闻");
+                break;
+            case "cn.weli.story"://微鲤看看
+                AccessibilityManager.clickByText("签到");//cn.weli.story:id/iv_check_day
+                AccessibilityManager.clickByText("立即签到");
+                break;
+            case "com.zm.news"://福头条
+                AccessibilityManager.clickByText("签到");
+                break;
+            case "com.ldzs.zhangxin"://蚂蚁头条
+                AccessibilityManager.clickByViewId("com.ldzs.zhangxin:id/time_period_sign_in");
+                break;
+            case "com.expflow.reading"://悦头条
+                AccessibilityManager.clickByViewIdAndText("com.expflow.reading:id/tv_counter_new", "阅读领取");
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void skip(String pkg, String cls) {
+        Shell.exec("am start -n " + pkg + "/" + cls);
     }
 
     private int getIntRandom(int min, int max) {
