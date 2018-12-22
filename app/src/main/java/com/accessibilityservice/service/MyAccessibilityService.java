@@ -2,14 +2,12 @@ package com.accessibilityservice.service;
 
 import android.accessibilityservice.AccessibilityService;
 import android.content.Intent;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import com.accessibilityservice.MainApplication;
 import com.accessibilityservice.activity.MainActivity;
-import com.accessibilityservice.manager.TaskManager;
 import com.accessibilityservice.util.Shell;
 
 import java.util.ArrayList;
@@ -132,11 +130,8 @@ public class MyAccessibilityService extends AccessibilityService {
         int key = event.getKeyCode();
         switch (key) {
             case KeyEvent.KEYCODE_VOLUME_DOWN:
-                Log.i("----", "KEYCODE_VOLUME_DOWN");
-                TaskManager.getInstance().stop();
                 break;
             case KeyEvent.KEYCODE_VOLUME_UP:
-                Log.i("----", "KEYCODE_VOLUME_UP");
                 break;
         }
         return super.onKeyEvent(event);

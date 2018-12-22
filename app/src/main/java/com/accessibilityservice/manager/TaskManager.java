@@ -18,17 +18,14 @@ import java.util.Random;
 
 /**
  * Created by gongkai on 2018/11/8.
+ * 一个平台随机阅读10-20分钟
+ * 主页 1到2次随机滑动次数，1到2秒随机滑动一次
+ * 详情页 6-20次随机滑动次数 3-5秒随机滑动一次
+ * 每阅读4篇文章里，随机一篇上拉
  */
 
 public class TaskManager {
     private volatile static TaskManager instance = null;
-    private static boolean isStop = false;//停止脚本
-    private long runStartTime;
-    private long runTime;
-    private AppModel appModel;
-    private List<String> clsList;
-    private String homeCls;
-    private boolean isRefresh;
 
     private TaskManager() {
         if (clsList == null) {
@@ -64,6 +61,16 @@ public class TaskManager {
         return false;
     }
 
+    private static boolean isStop = false;//是否停止脚本
+    private long runStartTime;//平台阅读开始时间
+    private long runTime;//平台随机运行时间
+    private AppModel appModel;
+    private List<String> clsList;
+    private String homeCls;
+    private boolean isRefresh;//主页是否下拉刷新
+    private int index = 0;//阅读到第几篇了
+    private int indexToRefresh = 0;//第几篇随机刷新
+
     //初始化执行任务
     public void task(AppModel appModel) {
         if (isStop) {
@@ -78,6 +85,8 @@ public class TaskManager {
         runStartTime = System.currentTimeMillis();
         runTime = getIntRandom(10, 20) * 60 * 1000;
         isRefresh = false;
+        index = 0;
+        indexToRefresh = 0;
         this.appModel = appModel;
         for (AppModel.AppPageModel model : appModel.getPages()) {
             clsList.add(model.getClassName());
@@ -130,8 +139,14 @@ public class TaskManager {
                             AccessibilityManager.getInstance().clickByViewIdForList(viewId);
                         }
                     } else if ("2".equals(model.getType())) {
+                        if (index == 0) {
+                            indexToRefresh = getIntRandom(1, 4);
+                        }
                         scrollDown(true, model);
                         backHome();
+                        if (index == 4) {
+                            index = 0;
+                        }
                         Log.i("----", "阅读完毕回到主页== " + AppUtils.getTopCls());
                     }
                 } else if (!clsList.contains(AppUtils.getTopCls())) {
@@ -148,28 +163,31 @@ public class TaskManager {
         doTask(appModel);
     }
 
-    //上拉
+    //上拉阅读
     private void scrollDown(boolean isDetails, AppModel.AppPageModel model) {
         int sleepTime;
         int scroolCount;
         int count = 0;
+        int indexDrop = 0;//详情页随机第几次下拉一次
         if (isDetails) {//详情页 6-20次随机滑动次数
             scroolCount = getIntRandom(6, 20);
+            indexDrop = getIntRandom(3, scroolCount);
+            index++;
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        } else {//主页 1到3次随机滑动次数
+        } else {//主页 1到2次随机滑动次数
             scroolCount = getIntRandom(1, 2);
         }
         Log.i("----", "scroolCount == " + scroolCount);
         for (; ; ) {
             if (isStop()) break;
-            int y = getIntRandom(300, 500);
+            int y = getIntRandom(300, 700);
             if (isDetails) {//详情页 3-5秒滑动一次
                 sleepTime = getIntRandom(3, 5);
-            } else {//主页 2到5秒滑动一次
+            } else {//主页 1到2秒滑动一次
                 sleepTime = getIntRandom(1, 2);
             }
             Log.i("----", "y == " + y);
@@ -195,7 +213,7 @@ public class TaskManager {
                         if (Build.VERSION.SDK_INT < 21) {
                             if (topActivity.getPkgName().equals("cn.weli.story")
                                     || topActivity.getPkgName().equals("com.martian.hbnews")) {
-                                Shell.execute("input swipe " + y + " 1300 " + y + " " + y);
+                                Shell.execute("input swipe " + y + " 1200 " + y + " " + y);
                                 Shell.exec("input keyevent 20");
                             } else {
                                 Shell.exec("input keyevent 20");
@@ -203,13 +221,14 @@ public class TaskManager {
                                 Shell.exec("input keyevent 20");
                                 Shell.exec("input keyevent 20");
                             }
-                        } else if (getBooleanRandom()) {//下滑
-                            Shell.execute("input swipe " + y + " " + y + " " + y + " 1000 ");
+                        } else if (indexToRefresh == index && count == indexDrop) {//下滑
+                            Shell.execute("input swipe " + y + " " + y + " " + y + " 1200 ");
+                            Log.i("----", "阅读到第" + index + "篇，滑动到第" + count + "次随机下滑");
                         } else {//上滑
-                            Shell.execute("input swipe " + y + " 1300 " + y + " " + y + " ");
+                            Shell.execute("input swipe " + y + " 1200 " + y + " " + y + " ");
                         }
                     } else {//上滑
-                        Shell.execute("input swipe " + y + " 1300 " + y + " " + y + " ");
+                        Shell.execute("input swipe " + y + " 1200 " + y + " " + y + " ");
                     }
                 } else {
                     break;

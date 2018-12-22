@@ -11,9 +11,9 @@
         android:background="#ff333333">
 
         <Button
+            android:id="@+id/btn_right"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/btn_right"
             android:layout_alignParentRight="true"
             android:layout_centerInParent="true"
             android:layout_marginRight="10.0dip"
@@ -29,34 +29,34 @@
 
         <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_toLeftOf="@+id/btn_right"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20.0dip"
+            android:layout_toLeftOf="@+id/btn_right"
             android:orientation="vertical"
             android:padding="10.0dip">
 
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:layout_weight="1"
-                    android:id="@+id/tv_startTime"
-                    android:text="请设置开始时间"
-                    android:textColor="#ffeeeeee"
-                    android:textSize="15.0dip"/>
+            <TextView
+                android:id="@+id/tv_startTime"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="请设置开始时间"
+                android:textColor="#ffeeeeee"
+                android:textSize="15.0dip"/>
 
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5.0dip"
-                    android:gravity="center"
-                    android:layout_weight="1"
-                    android:id="@+id/tv_endTime"
-                    android:text="请设置结束时间"
-                    android:textColor="#ffeeeeee"
-                    android:textSize="15.0dip"/>
-            </LinearLayout>
+            <TextView
+                android:id="@+id/tv_endTime"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5.0dip"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="请设置结束时间"
+                android:textColor="#ffeeeeee"
+                android:textSize="15.0dip"/>
+        </LinearLayout>
     </RelativeLayout>
 
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
@@ -99,7 +99,7 @@
             android:paddingLeft="2.0dip"
             android:paddingRight="2.0dip"
             android:paddingTop="2.0dip"
-            android:text="按下音量键减, 可停止全部脚本"
+            android:text="按下音量键, 可停止全部脚本"
             android:textColor="#ff999999"
             android:textSize="10.0dip"
             android:visibility="visible"/>
