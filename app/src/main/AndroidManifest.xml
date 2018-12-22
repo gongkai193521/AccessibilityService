@@ -76,6 +76,11 @@
                 android:resource="@xml/accessibility_service_config"/>
         </service>
 
+        <receiver android:name=".receiver.VolumeReceiver">
+            <intent-filter>
+                <action android:name="android.media.VOLUME_CHANGED_ACTION"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
