@@ -14,7 +14,6 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.accessibilityservice.MainApplication;
 import com.accessibilityservice.R;
@@ -60,20 +59,21 @@ public class ScriptListActivity extends BaseActivity {
 
     private static ScriptListActivity mScriptListActivity;
 
-    public static ScriptListActivity getActivity(){
+    public static ScriptListActivity getActivity() {
         return mScriptListActivity;
     }
 
-    public Long getMaxTime(){
-        if (tv_endTime==null||tv_endTime.getTag()==null||tv_endTime==null||tv_endTime.getTag()==null)return null;
+    public Long getMaxTime() {
+        if (tv_endTime == null || tv_endTime.getTag() == null || tv_endTime == null || tv_endTime.getTag() == null)
+            return null;
         String[] split = ((String) tv_endTime.getTag()).split(":");
         Calendar calendar = Calendar.getInstance();
-        if (TimeUtil.parseTime((String) tv_startTime.getTag())>TimeUtil.parseTime((String) tv_endTime.getTag())){
-            calendar.add(Calendar.DATE,1);
+        if (TimeUtil.parseTime((String) tv_startTime.getTag()) > TimeUtil.parseTime((String) tv_endTime.getTag())) {
+            calendar.add(Calendar.DATE, 1);
         }
-        calendar.set(Calendar.HOUR_OF_DAY,Integer.valueOf(split[0]));
-        calendar.set(Calendar.MINUTE,Integer.valueOf(split[1]));
-        calendar.set(Calendar.SECOND,Integer.valueOf(split[2]));
+        calendar.set(Calendar.HOUR_OF_DAY, Integer.valueOf(split[0]));
+        calendar.set(Calendar.MINUTE, Integer.valueOf(split[1]));
+        calendar.set(Calendar.SECOND, Integer.valueOf(split[2]));
         return calendar.getTimeInMillis();
     }
 
@@ -85,53 +85,53 @@ public class ScriptListActivity extends BaseActivity {
 
     @Override
     public void setupViews(Bundle savedInstanceState) {
-        mScriptListActivity=this;
+        mScriptListActivity = this;
         initView();
     }
 
-    private Button btn_reverse_select_all, btn_select_all,btn_right;
+    private Button btn_reverse_select_all, btn_select_all, btn_right;
 
-    private TextView tv_startTime,tv_endTime;
+    private TextView tv_startTime, tv_endTime;
 
     private void initView() {
         setTitle("已购脚本");
-        tv_startTime=findViewById(R.id.tv_startTime);
+        tv_startTime = findViewById(R.id.tv_startTime);
         tv_startTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showChooseTime(tv_startTime);
             }
         });
-        tv_endTime=findViewById(R.id.tv_endTime);
+        tv_endTime = findViewById(R.id.tv_endTime);
         tv_endTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showChooseTime(tv_endTime);
             }
         });
-        btn_right=findViewById(R.id.btn_right);
+        btn_right = findViewById(R.id.btn_right);
         btn_right.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(tv_startTime.getTag()==null||tv_endTime.getTag()==null){
+                if (tv_startTime.getTag() == null || tv_endTime.getTag() == null) {
                     Toasty.normal(mContext, "请先设置时间!").show();
                     return;
                 }
                 String[] split = ((String) tv_startTime.getTag()).split(":");
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(System.currentTimeMillis());
-                calendar.set(Calendar.HOUR_OF_DAY,Integer.valueOf(split[0]));
-                calendar.set(Calendar.MINUTE,Integer.valueOf(split[1]));
-                calendar.set(Calendar.SECOND,Integer.valueOf(split[2]));
-                if (mHandler.hasMessages(200)){
+                calendar.set(Calendar.HOUR_OF_DAY, Integer.valueOf(split[0]));
+                calendar.set(Calendar.MINUTE, Integer.valueOf(split[1]));
+                calendar.set(Calendar.SECOND, Integer.valueOf(split[2]));
+                if (mHandler.hasMessages(200)) {
                     mHandler.removeMessages(200);
                 }
-                if (calendar.getTimeInMillis()<System.currentTimeMillis()){
-                    long delay=24*60*60 * 1000-(System.currentTimeMillis()-calendar.getTimeInMillis());
-                    mHandler.sendEmptyMessageDelayed(200,delay);
-                }else{
-                    long delay=calendar.getTimeInMillis()-System.currentTimeMillis();
-                    mHandler.sendEmptyMessageDelayed(200,delay);
+                if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
+                    long delay = 24 * 60 * 60 * 1000 - (System.currentTimeMillis() - calendar.getTimeInMillis());
+                    mHandler.sendEmptyMessageDelayed(200, delay);
+                } else {
+                    long delay = calendar.getTimeInMillis() - System.currentTimeMillis();
+                    mHandler.sendEmptyMessageDelayed(200, delay);
                 }
                 Toasty.normal(mContext, "开启成功!").show();
             }
@@ -152,20 +152,20 @@ public class ScriptListActivity extends BaseActivity {
         getPlatformList();
     }
 
-    private Handler mHandler=new Handler(Looper.getMainLooper()){
+    private Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             onRandomRuns(null);
-            mHandler.sendEmptyMessageDelayed(200,24*60*60 * 1000);
+            mHandler.sendEmptyMessageDelayed(200, 24 * 60 * 60 * 1000);
         }
     };
 
     protected void onDestroy() {
         super.onDestroy();
         release();
-        if (mHandler.hasMessages(200)){
-           mHandler.removeMessages(200);
+        if (mHandler.hasMessages(200)) {
+            mHandler.removeMessages(200);
         }
     }
 
@@ -260,7 +260,7 @@ public class ScriptListActivity extends BaseActivity {
     //已选择列表
     private List<AppModel> chooseList = new ArrayList<>();
 
-    private void execute(boolean isRandom) {
+    private void execute(final boolean isRandom) {
         if (System.currentTimeMillis() > UserManager.getInstance().getLogin().expiry_date) {
             Toasty.normal(mContext, "服务已到期,请续费!").show();
             return;
@@ -276,13 +276,6 @@ public class ScriptListActivity extends BaseActivity {
             return;
         }
         if (isRandom) {
-            List<AppModel> mtempLists=new ArrayList<>();
-            mtempLists.addAll(chooseList);
-            chooseList.clear();
-            for (int i=0;i<100;i++) {
-                Collections.shuffle(mtempLists);
-                chooseList.addAll(mtempLists);
-            }
             Toasty.info(mContext, "开始随机执行", 0, true).show();
         } else {
             Toasty.info(mContext, "开始顺序执行", 0, true).show();
@@ -294,6 +287,9 @@ public class ScriptListActivity extends BaseActivity {
                 for (; ; ) {
                     if (TaskManager.getInstance().getStop()) {
                         break;
+                    }
+                    if (isRandom) {
+                        Collections.shuffle(chooseList);
                     }
                     for (AppModel models : chooseList) {
                         if (TaskManager.getInstance().getStop()) {
@@ -309,53 +305,53 @@ public class ScriptListActivity extends BaseActivity {
     }
 
 
-    private void showChooseTime(final TextView mTextView){
+    private void showChooseTime(final TextView mTextView) {
         Object tag = mTextView.getTag();
-        if(tag==null){
-            tag="00:00:00";
+        if (tag == null) {
+            tag = "00:00:00";
         }
         Calendar selectedDate = Calendar.getInstance();
-        selectedDate.setTime(new Date(TimeUtil.parseTime((String)tag)));
+        selectedDate.setTime(new Date(TimeUtil.parseTime((String) tag)));
         Calendar startDate = Calendar.getInstance();
-        startDate.set(Calendar.HOUR_OF_DAY,0);
-        startDate.set(Calendar.MINUTE,0);
-        startDate.set(Calendar.SECOND,0);
+        startDate.set(Calendar.HOUR_OF_DAY, 0);
+        startDate.set(Calendar.MINUTE, 0);
+        startDate.set(Calendar.SECOND, 0);
         Calendar endDate = Calendar.getInstance();
-        endDate.set(Calendar.HOUR_OF_DAY,23);
-        endDate.set(Calendar.MINUTE,59);
-        endDate.set(Calendar.SECOND,59);
+        endDate.set(Calendar.HOUR_OF_DAY, 23);
+        endDate.set(Calendar.MINUTE, 59);
+        endDate.set(Calendar.SECOND, 59);
         //正确设置方式 原因：注意事项有说明
         TimePickerView pvTime = new TimePickerBuilder(this, new OnTimeSelectListener() {
             @Override
             public void onTimeSelect(Date date, View v) {//选中事件回调
                 Calendar mDate = Calendar.getInstance();
                 mDate.setTime(date);
-                int hour=mDate.get(Calendar.HOUR_OF_DAY);
-                int miute=mDate.get(Calendar.MINUTE);
-                int second=mDate.get(Calendar.SECOND);
-                String time=(hour<10?"0"+hour:hour+"")+":"+(miute<10?"0"+miute:miute+"")+":"+(second<10?"0"+second:second+"");
+                int hour = mDate.get(Calendar.HOUR_OF_DAY);
+                int miute = mDate.get(Calendar.MINUTE);
+                int second = mDate.get(Calendar.SECOND);
+                String time = (hour < 10 ? "0" + hour : hour + "") + ":" + (miute < 10 ? "0" + miute : miute + "") + ":" + (second < 10 ? "0" + second : second + "");
 
-                if (mTextView.getId()==R.id.tv_startTime){
-                    if (time.equals("00:00:00")){
+                if (mTextView.getId() == R.id.tv_startTime) {
+                    if (time.equals("00:00:00")) {
                         mTextView.setText("开始时间");
                         mTextView.setTag(null);
                         return;
-                    }else {
+                    } else {
                         mTextView.setText("开始时间:" + time);
                     }
-                }else{
-                    if (time.equals("00:00:00")){
+                } else {
+                    if (time.equals("00:00:00")) {
                         mTextView.setText("结束时间");
                         mTextView.setTag(null);
                         return;
-                    }else {
+                    } else {
                         mTextView.setText("结束时间:" + time);
                     }
                 }
                 mTextView.setTag(time);
             }
         })
-                .setType(new boolean[]{false, false, false, true, true,true})// 默认全部显示
+                .setType(new boolean[]{false, false, false, true, true, true})// 默认全部显示
                 .setCancelText("取消")//取消按钮文字
                 .setSubmitText("确定")//确认按钮文字
                 .setContentTextSize(15)//滚轮文字大小
@@ -369,8 +365,8 @@ public class ScriptListActivity extends BaseActivity {
                 .setTitleBgColor(Color.WHITE)//标题背景颜色 Night mode
                 .setBgColor(Color.WHITE)//滚轮背景颜色 Night mode
                 .setDate(selectedDate)// 如果不设置的话，默认是系统时间*/
-                .setRangDate(startDate,endDate)//起始终止年月日设定
-                .setLabel("年","月","日","时","分","秒")//默认设置为年月日时分秒
+                .setRangDate(startDate, endDate)//起始终止年月日设定
+                .setLabel("年", "月", "日", "时", "分", "秒")//默认设置为年月日时分秒
                 .isCenterLabel(true) //是否只显示中间选中项的label文字，false则每项item全部都带有label。
                 .isDialog(true)//是否显示为对话框样式
                 .build();

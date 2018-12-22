@@ -23,7 +23,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 26
         versionCode vsionCode
-        versionName "1.6"
+        versionName "1.7"
     }
     signingConfigs {
         release {
