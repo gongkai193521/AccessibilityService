@@ -6,10 +6,6 @@ import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
-import com.accessibilityservice.MainApplication;
-import com.accessibilityservice.activity.MainActivity;
-import com.accessibilityservice.util.Shell;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,7 +112,6 @@ public class MyAccessibilityService extends AccessibilityService {
 
     protected void onServiceConnected() {
         instance = this;
-        Shell.exec("am start -n " + MainApplication.getContext().getPackageName() + "/" + MainActivity.class.getName());
         super.onServiceConnected();
     }
 
