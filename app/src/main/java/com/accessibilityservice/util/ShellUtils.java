@@ -6,7 +6,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 
-public class Shell {
+public class ShellUtils {
     public static String exec(String str) {
         return exec(str, 10000, isRoot());
     }

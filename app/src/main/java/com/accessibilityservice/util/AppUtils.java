@@ -98,7 +98,7 @@ public class AppUtils {
     }
 
     public static ActivityInfo getTopActivity() {
-        Matcher matcher = Pattern.compile("\\s*mSurface=Surface\\(name=([^\\s\\/]+)\\/([^\\s]+)\\b").matcher((Shell.exec("dumpsys window w | grep \\/ | grep name=")).trim());
+        Matcher matcher = Pattern.compile("\\s*mSurface=Surface\\(name=([^\\s\\/]+)\\/([^\\s]+)\\b").matcher((ShellUtils.exec("dumpsys window w | grep \\/ | grep name=")).trim());
         ActivityInfo activityInfo = new ActivityInfo();
         if (matcher.find()) {
             activityInfo.setPkgName(matcher.group(1).trim());

@@ -8,10 +8,11 @@ import android.util.Log;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import com.accessibilityservice.service.MyAccessibilityService;
-import com.accessibilityservice.util.Shell;
+import com.accessibilityservice.util.ShellUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static com.accessibilityservice.MainApplication.mHandler;
 
@@ -60,16 +61,26 @@ public class AccessibilityManager {
             if (nodeInfo.getText() != null) {
                 final String text = nodeInfo.getText().toString();
                 if (!textList.toArray().toString().contains(text)) {
-                    Shell.execute("input tap " + rect2.left + " " + rect2.top);
-                    Log.i("----", "text == " + text);
+                    tap(rect2.left, rect2.top);
                     textList.add(text);
                     sendMsg("阅读" + text);
                 }
             } else {
-                Shell.execute("input tap " + rect2.left + " " + rect2.top);
+                tap(rect2.left, rect2.top);
             }
         }
         return false;
+    }
+
+    private String click = "input tap %s %s ";
+
+    //点击
+    private int tap(int tapX, int tapY) {
+        int left = getIntRandom(100, 800);
+        int top = getIntRandom(10, 100);
+        String format = String.format(click, tapX + left, tapY + top);
+        Log.i("----", "点击：tapX=" + (tapX + left) + " tapY=" + (tapY + top));
+        return ShellUtils.execute(format);
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -78,7 +89,7 @@ public class AccessibilityManager {
             if (nodeInfo.isVisibleToUser() && viewId.equals(nodeInfo.getViewIdResourceName())) {
                 Rect rect2 = new Rect();
                 nodeInfo.getBoundsInScreen(rect2);
-                Shell.execute("input tap " + rect2.left + " " + rect2.top);
+                ShellUtils.execute("input tap " + rect2.left + " " + rect2.top);
                 Log.i("----", "点击viewId== " + viewId);
                 if (nodeInfo.getText() != null) {
                     String text = nodeInfo.getText().toString();
@@ -98,7 +109,7 @@ public class AccessibilityManager {
                 if (charSequence != null && text.equals(charSequence.toString())) {
                     Rect rect2 = new Rect();
                     nodeInfo.getBoundsInScreen(rect2);
-                    Shell.execute("input tap " + rect2.left + " " + rect2.top);
+                    ShellUtils.execute("input tap " + rect2.left + " " + rect2.top);
                     Log.i("----", "点击viewId== " + viewId + " text==" + text);
                     break;
                 }
@@ -108,7 +119,7 @@ public class AccessibilityManager {
     }
 
     public static void clickBack() {
-        Shell.execute("input keyevent 4");
+        ShellUtils.execute("input keyevent 4");
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -130,13 +141,19 @@ public class AccessibilityManager {
                         || (description != null && description.toString().contains(s))) {
                     Rect rect2 = new Rect();
                     nodeInfo.getBoundsInScreen(rect2);
-                    Shell.execute("input tap " + rect2.left + " " + rect2.top);
+                    ShellUtils.execute("input tap " + rect2.left + " " + rect2.top);
                     Log.i("----", "点击text== " + s);
                     break;
                 }
             }
         }
         return false;
+    }
+
+    private int getIntRandom(int min, int max) {
+        Random random = new Random();
+        int num = random.nextInt(max) % (max - min + 1) + min;
+        return num;
     }
 
     public static void sendMsg(String msg) {
