@@ -13,7 +13,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
-import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -28,7 +27,7 @@ import com.accessibilityservice.R;
 import com.accessibilityservice.manager.UserManager;
 import com.accessibilityservice.util.AppUtils;
 import com.accessibilityservice.util.DeviceIdUtils;
-import com.accessibilityservice.util.Shell;
+import com.accessibilityservice.util.ShellUtils;
 import com.accessibilityservice.util.TimeUtil;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVFile;
@@ -96,7 +95,7 @@ public class MainActivity extends BaseActivity {
                             }).show();
                     break;
                 case 2:
-                    if (Shell.isRoot() && Shell.checkRootExecutable()) {
+                    if (ShellUtils.isRoot() && ShellUtils.checkRootExecutable()) {
                         loadIcon(true);
                         MainActivity.this.hideLoading();
                     } else {

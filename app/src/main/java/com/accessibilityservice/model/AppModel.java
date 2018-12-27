@@ -91,6 +91,8 @@ public class AppModel {
         private String type;  //操作 1 列表  2 详情页
         private Long planTime; //执行时间   0代表永久
         private List<String> views;//控件
+        private int minScrollCount;//最小滑动次数
+        private int maxScrollCount;//最大滑动次数
 
         public String getClassName() {
             return className;
@@ -122,6 +124,14 @@ public class AppModel {
 
         public void setViews(List<String> views) {
             this.views = views;
+        }
+
+        public int getMinScrollCount() {
+            return minScrollCount;
+        }
+
+        public int getMaxScrollCount() {
+            return maxScrollCount;
         }
     }
 }

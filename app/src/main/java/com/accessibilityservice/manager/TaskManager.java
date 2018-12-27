@@ -23,7 +23,7 @@ import static com.accessibilityservice.manager.AccessibilityManager.sendMsg;
  * Created by gongkai on 2018/11/8.
  * 一个平台随机阅读10-20分钟
  * 主页 首次进去下拉刷新，1到2次随机滑动次数，1到2秒随机滑动一次
- * 详情页 6-20次随机滑动次数 3-5秒随机滑动一次
+ * 详情页 6-15次随机滑动次数 3-5秒随机滑动一次
  * 每阅读4篇文章里，随机一篇上拉一次
  */
 
@@ -57,7 +57,8 @@ public class TaskManager {
         }
         //一个平台10-20分钟
         if (isStop || System.currentTimeMillis() - runStartTime >= runTime) {
-            ShellUtils.exec("am force-stop " + appModel.getAppPackage(), true);
+            ShellUtils.exec("am force-stop " + appModel.getAppPackage());
+            ShellUtils.exec("am force-stop " + appModel.getAppPackage());
             ShellUtils.exec("am start -n " + MainApplication.getContext().getPackageName() + "/" + ScriptListActivity.class.getName());
             return true;
         }
@@ -67,7 +68,7 @@ public class TaskManager {
     private static boolean isStop = false;//是否停止脚本
     private long runStartTime;//平台阅读开始时间
     private long runTime;//平台随机运行时间
-    private AppModel appModel;
+    private static AppModel appModel;
     private List<String> clsList;
     private String homeCls;
     private boolean isRefresh;//主页是否下拉刷新
@@ -169,20 +170,26 @@ public class TaskManager {
         doTask(appModel);
     }
 
-
-    //上拉阅读
+    //滑动阅读
     private void scrollDown(boolean isDetails, AppModel.AppPageModel model) {
         int sleepTime;
         int scroolCount;
         int count = 0;
         int indexDrop = 0;//详情页随机第几次下拉一次
-        if (isDetails) {//详情页 6-20次随机滑动次数
-            scroolCount = getIntRandom(6, 20);
+        if (isDetails) {//详情页 6-15次随机滑动次数
+            int minCount = model.getMinScrollCount();
+            int maxCount = model.getMaxScrollCount();
+            if (minCount == 0 && maxCount == 0) {
+                minCount = 6;
+                maxCount = 15;
+            }
+            scroolCount = getIntRandom(minCount, maxCount);
             indexDrop = getIntRandom(3, scroolCount);
             index++;
         } else {//主页 1到2次随机滑动次数
             scroolCount = getIntRandom(1, 2);
         }
+        sendMsg("随机滑动" + scroolCount + "次");
         for (; ; ) {
             if (isStop()) break;
             int startX = getIntRandom(400, 800);
