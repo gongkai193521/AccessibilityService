@@ -76,10 +76,10 @@ public class AccessibilityManager {
 
     //点击
     private int tap(int tapX, int tapY) {
-        int left = getIntRandom(100, 800);
-        int top = getIntRandom(10, 100);
-        String format = String.format(click, tapX + left, tapY + top);
-        Log.i("----", "点击：tapX=" + (tapX + left) + " tapY=" + (tapY + top));
+        int left = tapX; //+ getIntRandom(100, 500);
+        int top = tapY;//+ getIntRandom(10, 100);
+        String format = String.format(click, left, top);
+        Log.i("----", "点击：tapX=" + left + " tapY=" + top);
         return ShellUtils.execute(format);
     }
 

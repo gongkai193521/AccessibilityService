@@ -23,7 +23,7 @@ import static com.accessibilityservice.manager.AccessibilityManager.sendMsg;
  * Created by gongkai on 2018/11/8.
  * 一个平台随机阅读10-20分钟
  * 主页 首次进去下拉刷新，1到2次随机滑动次数，1到2秒随机滑动一次
- * 详情页 6-15次随机滑动次数 3-5秒随机滑动一次
+ * 详情页 3-16次随机滑动次数 3-5秒随机滑动一次
  * 每阅读4篇文章里，随机一篇上拉一次
  */
 
@@ -71,7 +71,7 @@ public class TaskManager {
     private static AppModel appModel;
     private List<String> clsList;
     private String homeCls;
-    private boolean isRefresh;//主页是否下拉刷新
+    private int refreshCount = 0;//主页下拉刷新
     private int index = 0;//阅读到第几篇了
     private int indexToRefresh = 0;//第几篇随机刷新
 
@@ -89,8 +89,7 @@ public class TaskManager {
         Log.i("----", "开始执行-appmodel== " + GsonUtils.toJson(appModel));
         runStartTime = System.currentTimeMillis();
         runTime = getIntRandom(10, 20) * 60 * 1000;
-        isRefresh = false;
-        index = 0;
+        refreshCount = 0;
         indexToRefresh = 0;
         this.appModel = appModel;
         for (AppModel.AppPageModel model : appModel.getPages()) {
@@ -130,21 +129,19 @@ public class TaskManager {
                             AccessibilityManager.clickByViewId(viewId);
                         }
                     } else if ("1".equals(model.getType())) {
-                        if (!isRefresh) {
-                            for (int i = 0; i < getIntRandom(1, 5); i++) {
-                                ShellUtils.execute("input swipe 600 600 600 1200");
-                                try {
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
+                        if (refreshCount < 2) {
+                            ShellUtils.execute("input swipe 600 600 600 1300");
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
                             }
-                            isRefresh = true;
                         }
                         scrollDown(false, model);
                         for (String viewId : model.getViews()) {
                             AccessibilityManager.getInstance().clickByViewIdForList(viewId);
                         }
+                        refreshCount++;
                     } else if ("2".equals(model.getType())) {
                         if (index == 0) {
                             indexToRefresh = getIntRandom(1, 4);
@@ -176,12 +173,12 @@ public class TaskManager {
         int scroolCount;
         int count = 0;
         int indexDrop = 0;//详情页随机第几次下拉一次
-        if (isDetails) {//详情页 6-15次随机滑动次数
+        if (isDetails) {//详情页 3-16次随机滑动次数
             int minCount = model.getMinScrollCount();
             int maxCount = model.getMaxScrollCount();
             if (minCount == 0 && maxCount == 0) {
-                minCount = 6;
-                maxCount = 15;
+                minCount = 3;
+                maxCount = 16;
             }
             scroolCount = getIntRandom(minCount, maxCount);
             indexDrop = getIntRandom(3, scroolCount);
@@ -235,8 +232,8 @@ public class TaskManager {
                                 ShellUtils.exec("input keyevent 20");
                             }
                         } else if (indexToRefresh == index && count == indexDrop) {//下滑
-                            slide(endX, endY, startX, startY, scroolTime);
                             sendMsg("随机下滑");
+                            slide(endX, endY, startX, startY, scroolTime);
                             Log.i("----", "阅读到第" + index + "篇，滑动到第" + count + "次随机下滑");
                         } else {//上滑
                             slide(startX, startY, endX, endY, scroolTime);
