@@ -10,11 +10,14 @@ import com.accessibilityservice.model.AppModel;
 import com.accessibilityservice.service.MyAccessibilityService;
 import com.accessibilityservice.util.AppUtils;
 import com.accessibilityservice.util.GsonUtils;
-import com.accessibilityservice.util.Shell;
+import com.accessibilityservice.util.MemoryUtils;
+import com.accessibilityservice.util.ShellUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import static com.accessibilityservice.manager.AccessibilityManager.sendMsg;
 
 /**
  * Created by gongkai on 2018/11/8.
@@ -54,8 +57,8 @@ public class TaskManager {
         }
         //一个平台10-20分钟
         if (isStop || System.currentTimeMillis() - runStartTime >= runTime) {
-            Shell.exec("am force-stop " + appModel.getAppPackage(), true);
-            Shell.exec("am start -n " + MainApplication.getContext().getPackageName() + "/" + ScriptListActivity.class.getName());
+            ShellUtils.exec("am force-stop " + appModel.getAppPackage(), true);
+            ShellUtils.exec("am start -n " + MainApplication.getContext().getPackageName() + "/" + ScriptListActivity.class.getName());
             return true;
         }
         return false;
@@ -77,10 +80,11 @@ public class TaskManager {
             return;
         }
         if (!AppUtils.isApplicationAvilible(appModel.getAppPackage())) {
-            AccessibilityManager.sendMsg("请先安装" + appModel.getAppName());
+            sendMsg("请先安装" + appModel.getAppName());
             return;
         }
-        AccessibilityManager.sendMsg("执行" + appModel.getAppName() + "脚本");
+        MemoryUtils.clearMemory();
+        sendMsg("执行" + appModel.getAppName() + "脚本");
         Log.i("----", "开始执行-appmodel== " + GsonUtils.toJson(appModel));
         runStartTime = System.currentTimeMillis();
         runTime = getIntRandom(10, 20) * 60 * 1000;
@@ -126,13 +130,15 @@ public class TaskManager {
                         }
                     } else if ("1".equals(model.getType())) {
                         if (!isRefresh) {
-                            Shell.execute("input swipe 600 600 600 1200");
-                            isRefresh = true;
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
+                            for (int i = 0; i < getIntRandom(1, 5); i++) {
+                                ShellUtils.execute("input swipe 600 600 600 1200");
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
                             }
+                            isRefresh = true;
                         }
                         scrollDown(false, model);
                         for (String viewId : model.getViews()) {
@@ -151,7 +157,7 @@ public class TaskManager {
                     }
                 } else if (!clsList.contains(AppUtils.getTopCls())) {
                     if (AppUtils.getTopCls().contains("Video")) {
-                        AccessibilityManager.sendMsg("跳过广告视屏页面");
+                        sendMsg("跳过广告视屏页面");
                     }
                     Log.i("----", "没有该页面--回到主页");
                     backHome();
@@ -163,6 +169,7 @@ public class TaskManager {
         doTask(appModel);
     }
 
+
     //上拉阅读
     private void scrollDown(boolean isDetails, AppModel.AppPageModel model) {
         int sleepTime;
@@ -173,75 +180,85 @@ public class TaskManager {
             scroolCount = getIntRandom(6, 20);
             indexDrop = getIntRandom(3, scroolCount);
             index++;
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         } else {//主页 1到2次随机滑动次数
             scroolCount = getIntRandom(1, 2);
         }
-        Log.i("----", "scroolCount == " + scroolCount);
         for (; ; ) {
             if (isStop()) break;
-            int y = getIntRandom(300, 700);
+            int startX = getIntRandom(400, 800);
+            int startY = getIntRandom(1200, 1500);
+            int endX = getIntRandom(400, 800);
+            int endY = getIntRandom(400, 800);
+            int scroolTime = getIntRandom(200, 600);
             if (isDetails) {//详情页 3-5秒滑动一次
                 sleepTime = getIntRandom(3, 5);
             } else {//主页 1到2秒滑动一次
                 sleepTime = getIntRandom(1, 2);
             }
-            Log.i("----", "y == " + y);
-            Log.i("----", "sleepTime == " + sleepTime);
+            Log.i("----", "startX=" + startX + " startY=" + startY
+                    + " endX=" + endX + " endY=" + endY
+                    + " scroolTime=" + scroolTime + " sleepTime == " + sleepTime
+                    + " scroolCount == " + scroolCount);
             if (count < scroolCount) {
                 count++;
+                try {
+                    sendMsg("随机等待" + sleepTime + "秒");
+                    Thread.sleep(sleepTime * 1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 ActivityInfo topActivity = AppUtils.getTopActivity();
                 String topCls = topActivity.getClsName();
+                String topPkg = topActivity.getPkgName();
                 if (!clsList.contains(topCls) || !model.getClassName().equals(topCls)) {
                     Log.i("----", "不是该页面--回到主页");
                     backHome();
                     break;
-                } else if (isDetails) {
-                    for (String viewId : model.getViews()) {//点击阅读全文
-                        AccessibilityManager.clickByViewId(viewId);
-                    }
-                    if (!"com.yanhui.qktx".equals(topActivity.getPkgName())) {
-                        AccessibilityManager.clickByText("查看全文,阅读全文,展开全文");
-                    }
                 }
-                if (appModel.getAppPackage().equals(topActivity.getPkgName())) {
+                if (appModel.getAppPackage().equals(topPkg)) {
                     if (isDetails) {
                         if (Build.VERSION.SDK_INT < 21) {
-                            if (topActivity.getPkgName().equals("cn.weli.story")
-                                    || topActivity.getPkgName().equals("com.martian.hbnews")) {
-                                Shell.execute("input swipe " + y + " 1200 " + y + " " + y);
-                                Shell.exec("input keyevent 20");
+                            if (topPkg.equals("cn.weli.story") || topPkg.equals("com.martian.hbnews")) {
+                                slide(startX, startY, endX, endY, scroolTime);
+                                ShellUtils.exec("input keyevent 20");
                             } else {
-                                Shell.exec("input keyevent 20");
-                                Shell.exec("input keyevent 20");
-                                Shell.exec("input keyevent 20");
-                                Shell.exec("input keyevent 20");
+                                ShellUtils.exec("input keyevent 20");
+                                ShellUtils.exec("input keyevent 20");
+                                ShellUtils.exec("input keyevent 20");
+                                ShellUtils.exec("input keyevent 20");
                             }
                         } else if (indexToRefresh == index && count == indexDrop) {//下滑
-                            Shell.execute("input swipe " + y + " " + y + " " + y + " 1200 ");
+                            slide(endX, endY, startX, startY, scroolTime);
+                            sendMsg("随机下滑");
                             Log.i("----", "阅读到第" + index + "篇，滑动到第" + count + "次随机下滑");
                         } else {//上滑
-                            Shell.execute("input swipe " + y + " 1200 " + y + " " + y + " ");
+                            slide(startX, startY, endX, endY, scroolTime);
+                        }
+                        for (String viewId : model.getViews()) {//点击阅读全文
+                            AccessibilityManager.clickByViewId(viewId);
+                        }
+                        if (!"com.yanhui.qktx".equals(topPkg)) {
+                            AccessibilityManager.clickByText("查看全文,阅读全文,展开全文");
                         }
                     } else {//上滑
-                        Shell.execute("input swipe " + y + " 1200 " + y + " " + y + " ");
+                        slide(startX, startY, endX, endY, scroolTime);
                     }
                 } else {
                     break;
-                }
-                try {
-                    Thread.sleep(sleepTime * 1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
             } else {
                 break;
             }
         }
+    }
+
+    private String scroll = "input swipe %s %s %s %s %s";
+
+    //滑动
+
+    private int slide(int startX, int startY, int endX, int endY, int scrollTime) {
+        String format = String.format(scroll, startX, startY, endX, endY, scrollTime);
+        return ShellUtils.execute(format);
     }
 
     private void sign() {
@@ -307,7 +324,7 @@ public class TaskManager {
     }
 
     private void skip(String pkg, String cls) {
-        Shell.exec("am start -n " + pkg + "/" + cls);
+        ShellUtils.exec("am start -n " + pkg + "/" + cls);
     }
 
     private int getIntRandom(int min, int max) {
@@ -327,7 +344,7 @@ public class TaskManager {
                 || "com.sohu.infonews".equals(AppUtils.getTopPkg())) {
             MyAccessibilityService.back();
         } else {
-            Shell.exec("am start -n " + appModel.getAppPackage() + "/" + homeCls);
+            ShellUtils.exec("am start -n " + appModel.getAppPackage() + "/" + homeCls);
         }
     }
 
@@ -345,6 +362,6 @@ public class TaskManager {
         AccessibilityManager.getInstance().clear();
         instance = null;
         Log.i("----", " 停止执行== " + (appModel == null ? "" : appModel.getAppName()) + "脚本");
-        AccessibilityManager.sendMsg("已停止执行" + (appModel == null ? "" : appModel.getAppName()) + "脚本");
+        sendMsg("已停止执行" + (appModel == null ? "" : appModel.getAppName()) + "脚本");
     }
 }
