@@ -206,7 +206,7 @@ public class TaskManager {
             if (count < scroolCount) {
                 count++;
                 try {
-                    sendMsg("随机等待" + sleepTime + "秒");
+                    sendMsg("防检测：获取平台检测包处理中。。稍等" + sleepTime + "秒");
                     Thread.sleep(sleepTime * 1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -214,41 +214,38 @@ public class TaskManager {
                 ActivityInfo topActivity = AppUtils.getTopActivity();
                 String topCls = topActivity.getClsName();
                 String topPkg = topActivity.getPkgName();
-                if (!clsList.contains(topCls) || !model.getClassName().equals(topCls)) {
+                if (!appModel.getAppPackage().equals(topPkg) ||
+                        !clsList.contains(topCls) || !model.getClassName().equals(topCls)) {
                     Log.i("----", "不是该页面--回到主页");
                     backHome();
                     break;
                 }
-                if (appModel.getAppPackage().equals(topPkg)) {
-                    if (isDetails) {
-                        if (Build.VERSION.SDK_INT < 21) {
-                            if (topPkg.equals("cn.weli.story") || topPkg.equals("com.martian.hbnews")) {
-                                slide(startX, startY, endX, endY, scroolTime);
-                                ShellUtils.exec("input keyevent 20");
-                            } else {
-                                ShellUtils.exec("input keyevent 20");
-                                ShellUtils.exec("input keyevent 20");
-                                ShellUtils.exec("input keyevent 20");
-                                ShellUtils.exec("input keyevent 20");
-                            }
-                        } else if (indexToRefresh == index && count == indexDrop) {//下滑
-                            sendMsg("随机下滑");
-                            slide(endX, endY, startX, startY, scroolTime);
-                            Log.i("----", "阅读到第" + index + "篇，滑动到第" + count + "次随机下滑");
-                        } else {//上滑
+                if (isDetails) {
+                    for (String viewId : model.getViews()) {//点击阅读全文
+                        AccessibilityManager.clickByViewId(viewId);
+                    }
+                    if (!"com.yanhui.qktx".equals(topPkg)) {
+                        AccessibilityManager.clickByText("查看全文,阅读全文,展开全文");
+                    }
+                    if (Build.VERSION.SDK_INT < 21) {
+                        if (topPkg.equals("cn.weli.story") || topPkg.equals("com.martian.hbnews")) {
                             slide(startX, startY, endX, endY, scroolTime);
+                            ShellUtils.exec("input keyevent 20");
+                        } else {
+                            ShellUtils.exec("input keyevent 20");
+                            ShellUtils.exec("input keyevent 20");
+                            ShellUtils.exec("input keyevent 20");
+                            ShellUtils.exec("input keyevent 20");
                         }
-                        for (String viewId : model.getViews()) {//点击阅读全文
-                            AccessibilityManager.clickByViewId(viewId);
-                        }
-                        if (!"com.yanhui.qktx".equals(topPkg)) {
-                            AccessibilityManager.clickByText("查看全文,阅读全文,展开全文");
-                        }
+                    } else if (indexToRefresh == index && count == indexDrop) {//下滑
+                        sendMsg("随机下滑");
+                        slide(endX, endY, startX, startY, scroolTime);
+                        Log.i("----", "阅读到第" + index + "篇，滑动到第" + count + "次随机下滑");
                     } else {//上滑
                         slide(startX, startY, endX, endY, scroolTime);
                     }
-                } else {
-                    break;
+                } else {//上滑
+                    slide(startX, startY, endX, endY, scroolTime);
                 }
             } else {
                 break;
