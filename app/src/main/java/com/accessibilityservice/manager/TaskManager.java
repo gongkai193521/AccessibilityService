@@ -49,18 +49,20 @@ public class TaskManager {
 
     //是否停止执行
     private boolean isStop() {
-        ScriptListActivity activity = ScriptListActivity.getActivity();
-        if (activity != null) {
-            if (activity.getMaxTime() != null && System.currentTimeMillis() >= activity.getMaxTime()) {
-                stop();
-            }
-        }
         //一个平台10-20分钟
-        if (isStop || System.currentTimeMillis() - runStartTime >= runTime) {
+        if (timingStop() || isStop || System.currentTimeMillis() - runStartTime >= runTime) {
             ShellUtils.exec("am force-stop " + appModel.getAppPackage());
             ShellUtils.exec("am force-stop " + appModel.getAppPackage());
             ShellUtils.exec("am start -n " + MainApplication.getContext().getPackageName() + "/" + ScriptListActivity.class.getName());
             return true;
+        }
+        return false;
+    }
+
+    private boolean timingStop() {
+        ScriptListActivity activity = ScriptListActivity.getActivity();
+        if (activity != null) {
+            return activity.getMaxTime() != null && System.currentTimeMillis() >= activity.getMaxTime();
         }
         return false;
     }
@@ -88,7 +90,7 @@ public class TaskManager {
         sendMsg("执行" + appModel.getAppName() + "脚本");
         Log.i("----", "开始执行-appmodel== " + GsonUtils.toJson(appModel));
         runStartTime = System.currentTimeMillis();
-        runTime = getIntRandom(10, 20) * 60 * 1000;
+        runTime = (long) getDoubleRandom(10, 20) * 60 * 1000;
         refreshCount = 0;
         indexToRefresh = 0;
         this.appModel = appModel;
@@ -169,7 +171,7 @@ public class TaskManager {
 
     //滑动阅读
     private void scrollDown(boolean isDetails, AppModel.AppPageModel model) {
-        int sleepTime;
+        long sleepTime;
         int scroolCount;
         int count = 0;
         int indexDrop = 0;//详情页随机第几次下拉一次
@@ -187,7 +189,7 @@ public class TaskManager {
             scroolCount = getIntRandom(1, 2);
         }
         sendMsg("随机滑动" + scroolCount + "次");
-        for (; ; ) {
+        while (true) {
             if (isStop()) break;
             int startX = getIntRandom(400, 800);
             int startY = getIntRandom(1200, 1500);
@@ -195,9 +197,9 @@ public class TaskManager {
             int endY = getIntRandom(400, 800);
             int scroolTime = getIntRandom(200, 600);
             if (isDetails) {//详情页 3-5秒滑动一次
-                sleepTime = getIntRandom(3, 5);
+                sleepTime = (long) (getDoubleRandom(3, 5) * 1000);
             } else {//主页 1到2秒滑动一次
-                sleepTime = getIntRandom(1, 2);
+                sleepTime = (long) (getDoubleRandom(1, 2) * 1000);
             }
             Log.i("----", "startX=" + startX + " startY=" + startY
                     + " endX=" + endX + " endY=" + endY
@@ -206,8 +208,8 @@ public class TaskManager {
             if (count < scroolCount) {
                 count++;
                 try {
-                    sendMsg("防检测：获取平台检测包处理中。。稍等" + sleepTime + "秒");
-                    Thread.sleep(sleepTime * 1000);
+                    sendMsg("防检测：获取平台检测包处理中。。稍等" + sleepTime + "毫秒");
+                    Thread.sleep(sleepTime);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -331,6 +333,12 @@ public class TaskManager {
     private int getIntRandom(int min, int max) {
         Random random = new Random();
         int num = random.nextInt(max) % (max - min + 1) + min;
+        return num;
+    }
+
+    private double getDoubleRandom(double min, double max) {
+        Random random = new Random();
+        double num = random.nextDouble() * (max - min) + min;
         return num;
     }
 

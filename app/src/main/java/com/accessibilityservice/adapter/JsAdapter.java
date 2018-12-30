@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -84,30 +83,30 @@ public class JsAdapter extends BaseListAdapter<AppModel> {
             @Override
             public void onClick(View view) {
                 if (!models.isInstall) {
-                    if (models.getmAVFile()==null){
+                    if (models.getmAVFile() == null) {
                         Toasty.error(mContext, "下载地址为空").show();
                         return;
                     }
-                    File file =new File(Environment.getExternalStorageDirectory(),models.getmAVFile().getUrl().substring(models.getmAVFile().getUrl().lastIndexOf("/")+1));
+                    File file = new File(Environment.getExternalStorageDirectory(), models.getmAVFile().getUrl().substring(models.getmAVFile().getUrl().lastIndexOf("/") + 1));
                     FileDownloader.getImpl().create(models.getmAVFile().getUrl())
                             .setPath(file.getAbsolutePath())
                             .setListener(new FileDownloadListener() {
                                 @Override
                                 protected void pending(BaseDownloadTask task, int soFarBytes, int totalBytes) {
-                                    Log.i("FileDownloader-pending","soFarBytes:"+soFarBytes+",totalBytes:"+totalBytes);
+                                    Log.i("FileDownloader-pending", "soFarBytes:" + soFarBytes + ",totalBytes:" + totalBytes);
                                     SYSDiaLogUtils.showProgressBar((Activity) mContext, SYSDiaLogUtils.SYSDiaLogType.RoundWidthNumberProgressBar, "下载中...");
                                     SYSDiaLogUtils.setProgressBar(0);
                                 }
 
                                 @Override
                                 protected void progress(BaseDownloadTask task, int soFarBytes, int totalBytes) {
-                                    Log.i("FileDownloader-progress","soFarBytes:"+soFarBytes+",totalBytes:"+totalBytes);
-                                    SYSDiaLogUtils.setProgressBar((int) ((100F*soFarBytes)/totalBytes));
+                                    Log.i("FileDownloader-progress", "soFarBytes:" + soFarBytes + ",totalBytes:" + totalBytes);
+                                    SYSDiaLogUtils.setProgressBar((int) ((100F * soFarBytes) / totalBytes));
                                 }
 
                                 @Override
                                 protected void completed(BaseDownloadTask task) {
-                                    Log.i("FileDownloader-complete","completed");
+                                    Log.i("FileDownloader-complete", "completed");
                                     SYSDiaLogUtils.dismissProgress();
                                     Intent intent = new Intent();
                                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -119,18 +118,18 @@ public class JsAdapter extends BaseListAdapter<AppModel> {
 
                                 @Override
                                 protected void paused(BaseDownloadTask task, int soFarBytes, int totalBytes) {
-                                    Log.i("FileDownloader-paused","paused");
+                                    Log.i("FileDownloader-paused", "paused");
                                 }
 
                                 @Override
                                 protected void error(BaseDownloadTask task, Throwable e) {
-                                    Log.i("FileDownloader-error",e.getMessage());
+                                    Log.i("FileDownloader-error", e.getMessage());
                                     SYSDiaLogUtils.dismissProgress();
                                 }
 
                                 @Override
                                 protected void warn(BaseDownloadTask task) {
-                                    Log.i("FileDownloader-warn","warn");
+                                    Log.i("FileDownloader-warn", "warn");
                                 }
                             }).start();
                     return;
@@ -139,7 +138,7 @@ public class JsAdapter extends BaseListAdapter<AppModel> {
                     @Override
                     public void run() {
                         TaskManager.getInstance().setStop(false);
-                        for (; ; ) {
+                        while (true) {
                             if (TaskManager.getInstance().getStop()) {
                                 break;
                             }

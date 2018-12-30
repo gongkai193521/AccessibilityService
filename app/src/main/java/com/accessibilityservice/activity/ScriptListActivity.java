@@ -284,7 +284,7 @@ public class ScriptListActivity extends BaseActivity {
         MainApplication.getExecutorService().execute(new Runnable() {
             @Override
             public void run() {
-                for (; ; ) {
+                while (true) {
                     if (TaskManager.getInstance().getStop()) {
                         break;
                     }
