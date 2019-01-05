@@ -51,10 +51,12 @@ public class MyAccessibilityService extends AccessibilityService {
         List arrayList = new ArrayList();
         if (instance != null) {
             AccessibilityNodeInfo rootInActiveWindow = instance.getRootInActiveWindow();
-            if (rootInActiveWindow != null) {
+            if (rootInActiveWindow != null && rootInActiveWindow.isVisibleToUser()) {
                 if (rootInActiveWindow.getParent() != null) {
-                    arrayList.add(rootInActiveWindow.getParent());
-                    fullNodes(rootInActiveWindow.getParent(), arrayList);
+                    if (rootInActiveWindow.getParent().isVisibleToUser()) {
+                        arrayList.add(rootInActiveWindow.getParent());
+                        fullNodes(rootInActiveWindow.getParent(), arrayList);
+                    }
                 } else {
                     arrayList.add(rootInActiveWindow);
                     fullNodes(rootInActiveWindow, arrayList);

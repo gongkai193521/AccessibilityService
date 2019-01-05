@@ -226,9 +226,7 @@ public class TaskManager {
                     for (String viewId : model.getViews()) {//点击阅读全文
                         AccessibilityManager.clickByViewId(viewId);
                     }
-                    if (!"com.yanhui.qktx".equals(topPkg)) {
-                        AccessibilityManager.clickByText("查看全文,阅读全文,展开全文");
-                    }
+                    AccessibilityManager.clickByText("查看全文,阅读全文,展开全文");
                     if (Build.VERSION.SDK_INT < 21) {
                         if (topPkg.equals("cn.weli.story") || topPkg.equals("com.martian.hbnews")) {
                             slide(startX, startY, endX, endY, scroolTime);

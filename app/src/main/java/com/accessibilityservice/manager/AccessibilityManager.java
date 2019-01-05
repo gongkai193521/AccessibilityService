@@ -141,8 +141,10 @@ public class AccessibilityManager {
                         || (description != null && description.toString().contains(s))) {
                     Rect rect2 = new Rect();
                     nodeInfo.getBoundsInScreen(rect2);
-                    ShellUtils.execute("input tap " + rect2.left + " " + rect2.top);
-                    Log.i("----", "点击text== " + s);
+                    if (rect2.bottom < 1700) {
+                        ShellUtils.execute("input tap " + rect2.left + " " + rect2.top);
+                        Log.i("----", "点击text== " + s + " bottom" + rect2.bottom);
+                    }
                     break;
                 }
             }
